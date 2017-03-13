@@ -70,7 +70,7 @@ class App {
 
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
-        var url = f.files[v];
+        var url = f.files[v].substring(5);  //remove http:
 
         opentype.load(url, (err, font) => {
 

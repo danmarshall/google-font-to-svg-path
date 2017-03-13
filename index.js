@@ -54,7 +54,7 @@ var App = (function () {
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
-        var url = f.files[v];
+        var url = f.files[v].substring(5); //remove http:
         opentype.load(url, function (err, font) {
             //generate the text using a font
             var textModel = new makerjs.models.Text(font, text, size, union);
