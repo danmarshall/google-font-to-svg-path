@@ -1,0 +1,21 @@
+body, div, input, select, button {
+    font-family: sans-serif;
+}
+
+body {
+    padding: 0 20px;
+}
+
+hr {
+    margin: 20px 0;
+}
+
+svg {
+    margin: 20px;
+    overflow: visible;
+}
+
+textarea {
+    height: 300px;
+    width: 100%;
+}

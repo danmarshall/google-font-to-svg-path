@@ -7,11 +7,36 @@
   <title>google-font-to-svg-path</title>
   <meta name="description" content="google-font-to-svg-path">
 
+  <link rel="stylesheet" type="text/css" href="index.css" />
+
+  <script src="http://microsoft.github.io/maker.js/target/js/browser.maker.js" type="text/javascript"></script>
+  <script src="https://pomax.github.io/bezierjs/bezier.js" type="text/javascript"></script>
+  <script src="http://opentype.js.org/dist/opentype.js" type="text/javascript"></script>
+  <script src="index.js" type="text/javascript"></script>
+
 </head>
 
 <body>
 
-hello world
+<h1>Google font to SVG path</h1>
+
+<a href="https://github.com/danmarshall/google-font-to-svg-path">link to GitHub</a>
+
+<hr/>
+
+font: <select id="font-select"></select>
+
+variant: <select id="font-variant"></select>
+
+text: <input type="text" id="input-text" value="Verb" />
+
+size: <input type="number" id="input-size" value="100" />
+
+union: <input type="checkbox" id="input-union" />
+
+<div id="svg-render"></div>
+
+<textarea id="output-svg"></textarea>
 
 </body>
 </html>
