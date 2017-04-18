@@ -8,7 +8,7 @@ var App = (function () {
                 size = parseFloat(_this.sizeInput.value);
             if (!size)
                 size = 100;
-            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked);
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined);
         };
         this.loadVariants = function () {
             _this.selectVariant.options.length = 0;
@@ -22,13 +22,14 @@ var App = (function () {
         this.selectVariant = this.$('#font-variant');
         this.unionCheckbox = this.$('#input-union');
         this.textInput = this.$('#input-text');
+        this.bezierAccuracy = this.$('#input-bezier-accuracy');
         this.sizeInput = this.$('#input-size');
         this.renderDiv = this.$('#svg-render');
         this.outputTextarea = this.$('#output-svg');
     };
     App.prototype.handleEvents = function () {
         this.selectFamily.onchange = this.loadVariants;
-        this.selectVariant.onchange = this.textInput.onchange = this.textInput.onkeyup = this.sizeInput.onchange = this.unionCheckbox.onchange = this.renderCurrent;
+        this.selectVariant.onchange = this.textInput.onchange = this.textInput.onkeyup = this.sizeInput.onchange = this.unionCheckbox.onchange = this.bezierAccuracy.onchange = this.renderCurrent;
     };
     App.prototype.$ = function (selector) {
         return document.querySelector(selector);
@@ -50,14 +51,14 @@ var App = (function () {
         };
         xhr.send();
     };
-    App.prototype.render = function (fontIndex, variantIndex, text, size, union) {
+    App.prototype.render = function (fontIndex, variantIndex, text, size, union, bezierAccuracy) {
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
         var url = f.files[v].substring(5); //remove http:
         opentype.load(url, function (err, font) {
             //generate the text using a font
-            var textModel = new makerjs.models.Text(font, text, size, union);
+            var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy);
             var svg = makerjs.exporter.toSVG(textModel);
             _this.renderDiv.innerHTML = svg;
             _this.outputTextarea.value = svg;

@@ -24,15 +24,17 @@
 
 <hr/>
 
-font: <select id="font-select"></select>
+<label>font: <select id="font-select"></select></label>
 
-variant: <select id="font-variant"></select>
+<label>variant: <select id="font-variant"></select></label>
 
-text: <input type="text" id="input-text" value="Verb" />
+<label>text: <input type="text" id="input-text" value="Verb" /></label>
 
-size: <input type="number" id="input-size" value="100" />
+<label>size: <input type="number" id="input-size" value="100" /></label>
 
-union: <input type="checkbox" id="input-union" />
+<label>union: <input type="checkbox" id="input-union" /></label>
+
+<label>bezier accuracy <span title="0.5 = accurate to half a pixel &#013;.001 = accurate to 1/1000th of a pixel &#013;smaller numbers take longer to compute &#013;leave blank for auto">&#128712;</span> : <input type="text" id="input-bezier-accuracy" placeholder="auto" /></label>
 
 <div id="svg-render"></div>
 

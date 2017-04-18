@@ -10,6 +10,11 @@ hr {
     margin: 20px 0;
 }
 
+label {
+    margin-right: 3ex;
+    white-space: nowrap;
+}
+
 svg {
     margin: 20px;
     overflow: visible;
