@@ -4,6 +4,8 @@
   "description": "Create an SVG path from a Google font",
   "main": "index.js",
   "scripts": {
+    "build": "tsc ./index.ts",
+    "start": "http-server -c-1 -o",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,7 +24,12 @@
   },
   "homepage": "https://github.com/danmarshall/google-font-to-svg-path#readme",
   "dependencies": {
-    "@types/maker.js": "^0.9.1",
-    "@types/opentype.js": "0.0.0"
+    "@types/google.fonts": "^1.0.1",
+    "makerjs": "^0.9.71",
+    "opentype.js": "^0.7.3"
+  },
+  "devDependencies": {
+    "http-server": "^0.10.0",
+    "typescript": "^2.5.2"
   }
 }
