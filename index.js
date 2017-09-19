@@ -1,5 +1,5 @@
 var makerjs = require('makerjs');
-var App = (function () {
+var App = /** @class */ (function () {
     function App() {
         var _this = this;
         this.renderCurrent = function () {
@@ -8,7 +8,7 @@ var App = (function () {
                 size = parseFloat(_this.sizeInput.value);
             if (!size)
                 size = 100;
-            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined);
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined);
         };
         this.loadVariants = function () {
             _this.selectVariant.options.length = 0;
@@ -21,6 +21,7 @@ var App = (function () {
         this.selectFamily = this.$('#font-select');
         this.selectVariant = this.$('#font-variant');
         this.unionCheckbox = this.$('#input-union');
+        this.separateCheckbox = this.$('#input-separate');
         this.textInput = this.$('#input-text');
         this.bezierAccuracy = this.$('#input-bezier-accuracy');
         this.sizeInput = this.$('#input-size');
@@ -29,7 +30,7 @@ var App = (function () {
     };
     App.prototype.handleEvents = function () {
         this.selectFamily.onchange = this.loadVariants;
-        this.selectVariant.onchange = this.textInput.onchange = this.textInput.onkeyup = this.sizeInput.onchange = this.unionCheckbox.onchange = this.bezierAccuracy.onchange = this.renderCurrent;
+        this.selectVariant.onchange = this.textInput.onchange = this.textInput.onkeyup = this.sizeInput.onchange = this.unionCheckbox.onchange = this.separateCheckbox.onchange = this.bezierAccuracy.onchange = this.renderCurrent;
     };
     App.prototype.$ = function (selector) {
         return document.querySelector(selector);
@@ -51,7 +52,7 @@ var App = (function () {
         };
         xhr.send();
     };
-    App.prototype.render = function (fontIndex, variantIndex, text, size, union, bezierAccuracy) {
+    App.prototype.render = function (fontIndex, variantIndex, text, size, union, separate, bezierAccuracy) {
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
@@ -59,6 +60,11 @@ var App = (function () {
         opentype.load(url, function (err, font) {
             //generate the text using a font
             var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy);
+            if (separate) {
+                for (var i in textModel.models) {
+                    textModel.models[i].layer = i;
+                }
+            }
             var svg = makerjs.exporter.toSVG(textModel);
             _this.renderDiv.innerHTML = svg;
             _this.outputTextarea.value = svg;
