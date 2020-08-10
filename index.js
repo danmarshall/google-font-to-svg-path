@@ -1,3 +1,4 @@
+///<reference path="node_modules/makerjs/index.d.ts" />
 var makerjs = require('makerjs');
 var App = /** @class */ (function () {
     function App() {
@@ -8,7 +9,7 @@ var App = /** @class */ (function () {
                 size = parseFloat(_this.sizeInput.value);
             if (!size)
                 size = 100;
-            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined);
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined);
         };
         this.loadVariants = function () {
             _this.selectVariant.options.length = 0;
@@ -21,6 +22,7 @@ var App = /** @class */ (function () {
         this.selectFamily = this.$('#font-select');
         this.selectVariant = this.$('#font-variant');
         this.unionCheckbox = this.$('#input-union');
+        this.kerningCheckbox = this.$('#input-kerning');
         this.separateCheckbox = this.$('#input-separate');
         this.textInput = this.$('#input-text');
         this.bezierAccuracy = this.$('#input-bezier-accuracy');
@@ -30,7 +32,15 @@ var App = /** @class */ (function () {
     };
     App.prototype.handleEvents = function () {
         this.selectFamily.onchange = this.loadVariants;
-        this.selectVariant.onchange = this.textInput.onchange = this.textInput.onkeyup = this.sizeInput.onchange = this.unionCheckbox.onchange = this.separateCheckbox.onchange = this.bezierAccuracy.onchange = this.renderCurrent;
+        this.selectVariant.onchange =
+            this.textInput.onchange =
+                this.textInput.onkeyup =
+                    this.sizeInput.onchange =
+                        this.unionCheckbox.onchange =
+                            this.kerningCheckbox.onchange =
+                                this.separateCheckbox.onchange =
+                                    this.bezierAccuracy.onchange =
+                                        this.renderCurrent;
     };
     App.prototype.$ = function (selector) {
         return document.querySelector(selector);
@@ -52,14 +62,14 @@ var App = /** @class */ (function () {
         };
         xhr.send();
     };
-    App.prototype.render = function (fontIndex, variantIndex, text, size, union, separate, bezierAccuracy) {
+    App.prototype.render = function (fontIndex, variantIndex, text, size, union, kerning, separate, bezierAccuracy) {
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
         var url = f.files[v].substring(5); //remove http:
         opentype.load(url, function (err, font) {
             //generate the text using a font
-            var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy);
+            var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning: kerning });
             if (separate) {
                 for (var i in textModel.models) {
                     textModel.models[i].layer = i;
