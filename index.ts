@@ -61,7 +61,7 @@ class App {
         this.selectVariant.onchange =
             this.textInput.onchange =
             this.textInput.onkeyup =
-            this.sizeInput.onchange =
+            this.sizeInput.onkeyup =
             this.unionCheckbox.onchange =
             this.kerningCheckbox.onchange =
             this.separateCheckbox.onchange =
