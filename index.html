@@ -18,31 +18,54 @@
 
 <body>
 
-<h1>Google font to SVG path</h1>
-
-<a href="https://github.com/danmarshall/google-font-to-svg-path">link to GitHub</a>
+<div class="wrapper">
+    <h1><img src="logo.svg" alt="" class="logo"></h1>
+ 
+<a href="https://github.com/danmarshall/google-font-to-svg-path" class="link-to-github">link to GitHub</a>
 
 <hr/>
 
-<label>font: <select id="font-select"></select></label>
+<div class="input-holder">
+    <label>font: <select id="font-select" class="input"></select></label>
+</div>
 
-<label>variant: <select id="font-variant"></select></label>
+<div class="input-holder">
+    <label>variant: <select id="font-variant" class="input"></select></label>
+</div>
 
-<label>text: <input type="text" id="input-text" value="Verb" /></label>
+<div class="input-holder">
+    <label>text: <input type="text" id="input-text" value="Verb" class="input-text input"/></label>
 
-<label>size: <input type="number" id="input-size" value="100" /></label>
+</div>
+<div class="input-holder">
+    <label>size: <input type="number" id="input-size" value="100" class="input-size input"/></label>
+</div>
 
-<label>union: <input type="checkbox" id="input-union" /></label>
+<div class="input-holder">
+    <label>union: <input type="checkbox" id="input-union" /></label>
+</div>
 
-<label>kerning: <input type="checkbox" id="input-kerning" checked /></label>
+<div class="input-holder">
+    <label>kerning: <input type="checkbox" id="input-kerning" checked /></label>
+</div>
 
-<label>separate characters: <input type="checkbox" id="input-separate" /></label>
+<div class="input-holder"><label>separate characters: <input type="checkbox" id="input-separate" /></label>
+</div>
 
-<label>bezier accuracy <span title="0.5 = accurate to half a pixel &#013;.001 = accurate to 1/1000th of a pixel &#013;smaller numbers take longer to compute &#013;leave blank for auto">&#128712;</span> : <input type="text" id="input-bezier-accuracy" placeholder="auto" /></label>
+<div class="input-holder">
+    <label>bezier accuracy <span title="0.5 = accurate to half a pixel &#013;.001 = accurate to 1/1000th of a pixel &#013;smaller numbers take longer to compute &#013;leave blank for auto">&#128712;</span> : <input type="text" id="input-bezier-accuracy" placeholder="auto" class="input"/></label>
+</div>
 
-<div id="svg-render"></div>
+<div id="svg-render" ></div>
 
-<textarea id="output-svg"></textarea>
+<div class="textarea-container">
+  <textarea id="output-svg" readonly></textarea>  
+  <div class="buttons-container">
+      <button class="btn" id="copy-to-clipboard-btn">copy to clipboard</button>
+  <a id="download-btn" class="btn">Download Svg</a>
+  </div>
+</div>
+</div>
 
 </body>
 </html>

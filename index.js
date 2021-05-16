@@ -17,8 +17,25 @@ var App = /** @class */ (function () {
             var v = f.variants.forEach(function (v) { return _this.addOption(_this.selectVariant, v); });
             _this.renderCurrent();
         };
+        this.copyToClipboard=function(){
+            _this.outputTextarea.select();
+            document.execCommand("copy");
+            _this.copyToClipboardBtn.innerText='copied';
+            setTimeout(function() {
+          _this.copyToClipboardBtn.innerText='copy to clipboard';  
+            },2000);
+        };
+        // 
+        this.downloadSvg=function() {
+      // generate svg file 
+        var SvgFile=window.btoa(_this.outputTextarea.value);
+          _this.downloadButton.href='data:image/svg+xml;base64,'+SvgFile;
+            _this.downloadButton.download=_this.textInput.value;
+        }
     }
     App.prototype.init = function () {
+        this.downloadButton=this.$("#download-btn");
+        this.copyToClipboardBtn=this.$("#copy-to-clipboard-btn");
         this.selectFamily = this.$('#font-select');
         this.selectVariant = this.$('#font-variant');
         this.unionCheckbox = this.$('#input-union');
@@ -31,6 +48,8 @@ var App = /** @class */ (function () {
         this.outputTextarea = this.$('#output-svg');
     };
     App.prototype.handleEvents = function () {
+        this.copyToClipboardBtn.onclick=this.copyToClipboard;
+        this.downloadButton.onclick=this.downloadSvg;
         this.selectFamily.onchange = this.loadVariants;
         this.selectVariant.onchange =
             this.textInput.onchange =
