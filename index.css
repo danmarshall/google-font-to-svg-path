@@ -108,10 +108,3 @@ textarea:focus{
 .input:focus{
     border: 2px solid #FF7F50;
 }
-.input-checkbox{
-    -webkit-appearance: none;
-    appearance: none;
-    width: 1rem;
-    height: 1rem;
-    border: 1px solid #666;
-}
