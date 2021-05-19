@@ -15,10 +15,8 @@ class App {
     private sizeInput: HTMLInputElement;
     private renderDiv: HTMLDivElement;
     private outputTextarea: HTMLTextAreaElement;
-    private copyToClipboardBtn:
-    HTMLButtonElement;
-    private downloadButton:
-    HTMLAnchorElement;
+    private copyToClipboardBtn: HTMLButtonElement;
+    private downloadButton: HTMLAnchorElement;
     private renderCurrent = () => {
         var size = this.sizeInput.valueAsNumber;
         if (!size) size = parseFloat(this.sizeInput.value);
