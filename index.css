@@ -11,9 +11,7 @@ body {
 }
 h1{
     padding:0 0.5rem ;
-}
-.logo{
-    width: 100%;
+    margin-bottom: 1rem;
 }
 hr {
     margin: 20px 0;
