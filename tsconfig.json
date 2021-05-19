@@ -1,7 +1,12 @@
 {
     "compilerOptions": {
+        "noEmitOnError": false,
         "lib": [
-            "dom", "es5"
+            "dom",
+            "es5"
         ]
-    }
+    },
+    "exclude": [
+        "_site"
+    ]
 }

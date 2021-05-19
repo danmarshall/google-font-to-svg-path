@@ -15,7 +15,8 @@ class App {
     private sizeInput: HTMLInputElement;
     private renderDiv: HTMLDivElement;
     private outputTextarea: HTMLTextAreaElement;
-
+    private copyToClipboardBtn: HTMLButtonElement;
+    private downloadButton: HTMLAnchorElement;
     private renderCurrent = () => {
         var size = this.sizeInput.valueAsNumber;
         if (!size) size = parseFloat(this.sizeInput.value);
@@ -38,7 +39,19 @@ class App {
         var v = f.variants.forEach(v => this.addOption(this.selectVariant, v));
         this.renderCurrent();
     };
-
+    private downloadSvg = () => {
+        var SvgFile = window.btoa(this.outputTextarea.value);
+        this.downloadButton.href = 'data:image/svg+xml;base64,' + SvgFile;
+        this.downloadButton.download = this.textInput.value;
+    };
+    private copyToClipboard = () => {
+        this.outputTextarea.select();
+        document.execCommand('copy');
+        this.copyToClipboardBtn.innerText = 'copied';
+        setTimeout(() => {
+            this.copyToClipboardBtn.innerText = 'copy to clipboard';
+        }, 2000)
+    };
     constructor() {
 
     }
@@ -54,6 +67,8 @@ class App {
         this.sizeInput = this.$('#input-size') as HTMLInputElement;
         this.renderDiv = this.$('#svg-render') as HTMLDivElement;
         this.outputTextarea = this.$('#output-svg') as HTMLTextAreaElement;
+        this.downloadButton = this.$("#download-btn") as HTMLAnchorElement;
+        this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn") as HTMLButtonElement;
     }
 
     handleEvents() {
@@ -68,6 +83,8 @@ class App {
             this.bezierAccuracy.onchange =
             this.renderCurrent
             ;
+        this.copyToClipboardBtn.onclick = this.copyToClipboard;
+        this.downloadButton.onclick = this.downloadSvg;
     }
 
     $(selector: string) {
