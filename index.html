@@ -1,73 +1,87 @@
 <!doctype html>
 
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
+    <meta charset="utf-8">
 
-  <title>google-font-to-svg-path</title>
-  <meta name="description" content="google-font-to-svg-path">
+    <title>google-font-to-svg-path</title>
+    <meta name="description" content="google-font-to-svg-path">
 
-  <link rel="stylesheet" type="text/css" href="index.css" />
+    <link rel="stylesheet" type="text/css" href="index.css" />
 
-  <script src="https://maker.js.org/target/js/browser.maker.js" type="text/javascript"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bezier-js@2/bezier.js"></script>
-  <script src="opentype.js" type="text/javascript"></script>
-  <script src="index.js" type="text/javascript"></script>
-  
-  <script data-ad-client="ca-pub-9656548229423934" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-  
+    <script src="https://maker.js.org/target/js/browser.maker.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bezier-js@2/bezier.js"></script>
+    <script src="opentype.js" type="text/javascript"></script>
+    <script src="index.js" type="text/javascript"></script>
+
+    <script data-ad-client="ca-pub-9656548229423934" async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
 </head>
 
 <body>
-
-<div class="wrapper">
     <h1>Google Font to Svg Path</h1>
- 
-<a href="https://github.com/danmarshall/google-font-to-svg-path" class="link-to-github">link to GitHub</a>
+    <a href="https://github.com/danmarshall/google-font-to-svg-path" class="link-to-github">link to GitHub</a>
+    <hr />
 
-<hr/>
+    <main>
+        <div class="wrapper">
 
-<div class="input-holder">
-    <label>font: <select id="font-select" class="input"></select></label>
-</div>
+            <div class="input-holder">
+                <label>font: <select id="font-select" class="input"></select></label>
+            </div>
 
-<div class="input-holder">
-    <label>variant: <select id="font-variant" class="input"></select></label>
-</div>
+            <div class="input-holder">
+                <label>variant: <select id="font-variant" class="input"></select></label>
+            </div>
 
-<div class="input-holder">
-    <label>text: <input type="text" id="input-text" value="Verb" class="input-text input"/></label>
+            <div class="input-holder">
+                <label>text: <input type="text" id="input-text" value="Verb" class="input-text input" /></label>
 
-</div>
-<div class="input-holder">
-    <label>size: <input type="number" id="input-size" value="100" class="input-size input"/></label>
-</div>
+            </div>
+            <div class="input-holder">
+                <label>size: <input type="number" id="input-size" value="100" class="input-size input" /></label>
+            </div>
 
-<div class="input-holder">
-    <label>union: <input type="checkbox" id="input-union" /></label>
-</div>
+            <div class="input-holder">
+                <label>union: <input type="checkbox" id="input-union" /></label>
+            </div>
 
-<div class="input-holder">
-    <label>kerning: <input type="checkbox" id="input-kerning" checked /></label>
-</div>
+            <div class="input-holder">
+                <label>kerning: <input type="checkbox" id="input-kerning" checked /></label>
+            </div>
 
-<div class="input-holder"><label>separate characters: <input type="checkbox" id="input-separate" /></label>
-</div>
+            <div class="input-holder"><label>separate characters: <input type="checkbox" id="input-separate" /></label>
+            </div>
 
-<div class="input-holder">
-    <label>bezier accuracy <span title="0.5 = accurate to half a pixel &#013;.001 = accurate to 1/1000th of a pixel &#013;smaller numbers take longer to compute &#013;leave blank for auto">&#128712;</span> : <input type="text" id="input-bezier-accuracy" placeholder="auto" class="input"/></label>
-</div>
+            <div class="input-holder">
+                <label>bezier accuracy <span
+                        title="0.5 = accurate to half a pixel &#013;.001 = accurate to 1/1000th of a pixel &#013;smaller numbers take longer to compute &#013;leave blank for auto">&#128712;</span>
+                    : <input type="text" id="input-bezier-accuracy" placeholder="auto" class="input" /></label>
+            </div>
 
-<div id="svg-render" ></div>
+            <div id="svg-render"></div>
 
-<div class="textarea-container">
-  <textarea id="output-svg" readonly></textarea>  
-  <div class="buttons-container">
-      <button class="btn" id="copy-to-clipboard-btn">copy to clipboard</button>
-  <a id="download-btn" class="btn">Download Svg</a>
-  </div>
-</div>
-</div>
+            <div class="textarea-container">
+                <textarea id="output-svg" readonly></textarea>
+                <div class="buttons-container">
+                    <button class="btn" id="copy-to-clipboard-btn">copy to clipboard</button>
+                    <a id="download-btn" class="btn">Download Svg</a>
+                </div>
+            </div>
+        </div>
 
+        <div class="sidebar">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- vertical -->
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9656548229423934"
+                data-ad-slot="8489021387" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </main>
 </body>
+
 </html>

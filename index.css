@@ -3,11 +3,12 @@ body, div, input, select, button {
 }
 
 body {
+    margin: 0;
     padding: 0 20px;
 }
-.wrapper{
-    margin: 0 auto;
-    max-width: 1500px
+main {
+    display: grid;
+    grid-template-columns: auto 300px;
 }
 h1{
     padding:0 0.5rem ;
@@ -21,7 +22,10 @@ hr {
     color: #fff;
     background-color: #6E24B2;
     text-decoration: none;
-    border-radius: 0.25rem
+    border-radius: 0.25rem;
+    position: absolute;
+    right: 20px;
+    top: 20px;
 }
 label {
     /* margin-right: 3ex; */
