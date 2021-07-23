@@ -18,6 +18,7 @@ class App {
     private copyToClipboardBtn: HTMLButtonElement;
     private downloadButton: HTMLAnchorElement;
     private renderCurrent = () => {
+        this.updateUrl();
         var size = this.sizeInput.valueAsNumber;
         if (!size) size = parseFloat(this.sizeInput.value);
         if (!size) size = 100;
@@ -52,11 +53,32 @@ class App {
             this.copyToClipboardBtn.innerText = 'copy to clipboard';
         }, 2000)
     };
+    updateUrl() {
+        var urlSearchParams = new URLSearchParams(window.location.search);
+
+        urlSearchParams.set('font-select', this.selectFamily.value);
+        urlSearchParams.set('font-variant', this.selectVariant.value);
+        urlSearchParams.set('input-union', String(this.unionCheckbox.checked));
+        urlSearchParams.set('input-kerning', String(this.kerningCheckbox.checked));
+        urlSearchParams.set('input-separate', String(this.separateCheckbox.checked));
+        urlSearchParams.set('input-text', this.textInput.value);
+        urlSearchParams.set('input-bezier-accuracy', this.bezierAccuracy.value);
+        urlSearchParams.set('input-size', this.sizeInput.value);
+        
+        const url = window.location.protocol 
+                    + "//" + window.location.host 
+                    + window.location.pathname 
+                    + "?" 
+                    + urlSearchParams.toString();
+
+        window.history.replaceState({path: url}, "", url)
+    }
     constructor() {
 
     }
 
     init() {
+
         this.selectFamily = this.$('#font-select') as HTMLSelectElement;
         this.selectVariant = this.$('#font-variant') as HTMLSelectElement;
         this.unionCheckbox = this.$('#input-union') as HTMLInputElement;
@@ -69,6 +91,46 @@ class App {
         this.outputTextarea = this.$('#output-svg') as HTMLTextAreaElement;
         this.downloadButton = this.$("#download-btn") as HTMLAnchorElement;
         this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn") as HTMLButtonElement;
+
+        this.readQueryParams();
+    }
+
+    readQueryParams() {
+        var urlSearchParams = new URLSearchParams(window.location.search);
+
+        var selectFamily = urlSearchParams.get('font-select');
+        var selectVariant = urlSearchParams.get('font-variant');
+        var unionCheckbox = urlSearchParams.get('input-union');
+        var kerningCheckbox = urlSearchParams.get('input-kerning');
+        var separateCheckbox = urlSearchParams.get('input-separate');
+        var textInput = urlSearchParams.get('input-text');
+        var bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
+        var sizeInput = urlSearchParams.get('input-size');
+
+        if (selectFamily !== "")
+            this.selectFamily.value = selectFamily;
+        
+        if (selectVariant !== "")
+            this.selectVariant.value = selectVariant;
+
+        if (unionCheckbox !== "")
+            this.unionCheckbox.checked = unionCheckbox === "true" ? true : false;
+
+        if (kerningCheckbox !== "")
+            this.kerningCheckbox.checked = kerningCheckbox === "true" ? true : false;
+
+        if (separateCheckbox !== "")
+            this.separateCheckbox.checked = separateCheckbox === "true" ? true : false;
+        
+        if (textInput !== "" && textInput !== null)
+            this.textInput.value = textInput;
+        
+        if (bezierAccuracy !== "")
+            this.bezierAccuracy.value = bezierAccuracy;
+        
+        if (sizeInput !== "" && sizeInput !== null)
+            this.sizeInput.value = sizeInput;
+
     }
 
     handleEvents() {
@@ -81,6 +143,7 @@ class App {
             this.kerningCheckbox.onchange =
             this.separateCheckbox.onchange =
             this.bezierAccuracy.onchange =
+            this.bezierAccuracy.onkeyup =
             this.renderCurrent
             ;
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
@@ -94,6 +157,7 @@ class App {
     addOption(select: HTMLSelectElement, optionText: string) {
         var option = document.createElement('option');
         option.text = optionText;
+        option.value = optionText;
         select.options.add(option);
     }
 
@@ -105,6 +169,8 @@ class App {
             this.fontList.items.forEach(font => this.addOption(this.selectFamily, font.family));
             this.loadVariants();
             this.handleEvents();
+
+            this.readQueryParams();
         };
         xhr.send();
     }
@@ -119,7 +185,7 @@ class App {
         separate: boolean,
         bezierAccuracy: number
     ) {
-
+        
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
         var url = f.files[v].substring(5);  //remove http:

@@ -4,6 +4,7 @@ var App = /** @class */ (function () {
     function App() {
         var _this = this;
         this.renderCurrent = function () {
+            _this.updateUrl();
             var size = _this.sizeInput.valueAsNumber;
             if (!size)
                 size = parseFloat(_this.sizeInput.value);
@@ -31,6 +32,23 @@ var App = /** @class */ (function () {
             }, 2000);
         };
     }
+    App.prototype.updateUrl = function () {
+        var urlSearchParams = new URLSearchParams(window.location.search);
+        urlSearchParams.set('font-select', this.selectFamily.value);
+        urlSearchParams.set('font-variant', this.selectVariant.value);
+        urlSearchParams.set('input-union', String(this.unionCheckbox.checked));
+        urlSearchParams.set('input-kerning', String(this.kerningCheckbox.checked));
+        urlSearchParams.set('input-separate', String(this.separateCheckbox.checked));
+        urlSearchParams.set('input-text', this.textInput.value);
+        urlSearchParams.set('input-bezier-accuracy', this.bezierAccuracy.value);
+        urlSearchParams.set('input-size', this.sizeInput.value);
+        var url = window.location.protocol
+            + "//" + window.location.host
+            + window.location.pathname
+            + "?"
+            + urlSearchParams.toString();
+        window.history.replaceState({ path: url }, "", url);
+    };
     App.prototype.init = function () {
         this.selectFamily = this.$('#font-select');
         this.selectVariant = this.$('#font-variant');
@@ -44,6 +62,35 @@ var App = /** @class */ (function () {
         this.outputTextarea = this.$('#output-svg');
         this.downloadButton = this.$("#download-btn");
         this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn");
+        this.readQueryParams();
+    };
+    App.prototype.readQueryParams = function () {
+        var urlSearchParams = new URLSearchParams(window.location.search);
+        var selectFamily = urlSearchParams.get('font-select');
+        var selectVariant = urlSearchParams.get('font-variant');
+        var unionCheckbox = urlSearchParams.get('input-union');
+        var kerningCheckbox = urlSearchParams.get('input-kerning');
+        var separateCheckbox = urlSearchParams.get('input-separate');
+        var textInput = urlSearchParams.get('input-text');
+        var bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
+        var sizeInput = urlSearchParams.get('input-size');
+        console.log(unionCheckbox);
+        if (selectFamily !== "")
+            this.selectFamily.value = selectFamily;
+        if (selectVariant !== "")
+            this.selectVariant.value = selectVariant;
+        if (unionCheckbox !== "")
+            this.unionCheckbox.checked = unionCheckbox === "true" ? true : false;
+        if (kerningCheckbox !== "")
+            this.kerningCheckbox.checked = kerningCheckbox === "true" ? true : false;
+        if (separateCheckbox !== "")
+            this.separateCheckbox.checked = separateCheckbox === "true" ? true : false;
+        if (textInput !== "" && textInput !== null)
+            this.textInput.value = textInput;
+        if (bezierAccuracy !== "")
+            this.bezierAccuracy.value = bezierAccuracy;
+        if (sizeInput !== "" && sizeInput !== null)
+            this.sizeInput.value = sizeInput;
     };
     App.prototype.handleEvents = function () {
         this.selectFamily.onchange = this.loadVariants;
@@ -55,7 +102,8 @@ var App = /** @class */ (function () {
                             this.kerningCheckbox.onchange =
                                 this.separateCheckbox.onchange =
                                     this.bezierAccuracy.onchange =
-                                        this.renderCurrent;
+                                        this.bezierAccuracy.onkeyup =
+                                            this.renderCurrent;
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
         this.downloadButton.onclick = this.downloadSvg;
     };
@@ -65,6 +113,7 @@ var App = /** @class */ (function () {
     App.prototype.addOption = function (select, optionText) {
         var option = document.createElement('option');
         option.text = optionText;
+        option.value = optionText;
         select.options.add(option);
     };
     App.prototype.getGoogleFonts = function (apiKey) {
@@ -73,14 +122,17 @@ var App = /** @class */ (function () {
         xhr.open('get', 'https://www.googleapis.com/webfonts/v1/webfonts?key=' + apiKey, true);
         xhr.onloadend = function () {
             _this.fontList = JSON.parse(xhr.responseText);
+            console.log(_this.fontList);
             _this.fontList.items.forEach(function (font) { return _this.addOption(_this.selectFamily, font.family); });
             _this.loadVariants();
             _this.handleEvents();
+            _this.readQueryParams();
         };
         xhr.send();
     };
     App.prototype.render = function (fontIndex, variantIndex, text, size, union, kerning, separate, bezierAccuracy) {
         var _this = this;
+        // debugger;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
         var url = f.files[v].substring(5); //remove http:
