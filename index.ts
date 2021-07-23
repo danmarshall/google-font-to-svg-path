@@ -17,8 +17,8 @@ class App {
     private outputTextarea: HTMLTextAreaElement;
     private copyToClipboardBtn: HTMLButtonElement;
     private downloadButton: HTMLAnchorElement;
+    private createLinkButton: HTMLAnchorElement;
     private renderCurrent = () => {
-        this.updateUrl();
         var size = this.sizeInput.valueAsNumber;
         if (!size) size = parseFloat(this.sizeInput.value);
         if (!size) size = 100;
@@ -53,7 +53,7 @@ class App {
             this.copyToClipboardBtn.innerText = 'copy to clipboard';
         }, 2000)
     };
-    updateUrl() {
+    private updateUrl = () => {
         var urlSearchParams = new URLSearchParams(window.location.search);
 
         urlSearchParams.set('font-select', this.selectFamily.value);
@@ -90,9 +90,9 @@ class App {
         this.renderDiv = this.$('#svg-render') as HTMLDivElement;
         this.outputTextarea = this.$('#output-svg') as HTMLTextAreaElement;
         this.downloadButton = this.$("#download-btn") as HTMLAnchorElement;
+        this.createLinkButton = this.$("#create-link") as HTMLAnchorElement;
         this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn") as HTMLButtonElement;
 
-        this.readQueryParams();
     }
 
     readQueryParams() {
@@ -146,8 +146,10 @@ class App {
             this.bezierAccuracy.onkeyup =
             this.renderCurrent
             ;
+
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
         this.downloadButton.onclick = this.downloadSvg;
+        this.createLinkButton.onclick = this.updateUrl;
     }
 
     $(selector: string) {
@@ -171,6 +173,7 @@ class App {
             this.handleEvents();
 
             this.readQueryParams();
+            this.renderCurrent();
         };
         xhr.send();
     }
