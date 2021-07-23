@@ -4,7 +4,6 @@ var App = /** @class */ (function () {
     function App() {
         var _this = this;
         this.renderCurrent = function () {
-            _this.updateUrl();
             var size = _this.sizeInput.valueAsNumber;
             if (!size)
                 size = parseFloat(_this.sizeInput.value);
@@ -31,24 +30,24 @@ var App = /** @class */ (function () {
                 _this.copyToClipboardBtn.innerText = 'copy to clipboard';
             }, 2000);
         };
+        this.updateUrl = function () {
+            var urlSearchParams = new URLSearchParams(window.location.search);
+            urlSearchParams.set('font-select', _this.selectFamily.value);
+            urlSearchParams.set('font-variant', _this.selectVariant.value);
+            urlSearchParams.set('input-union', String(_this.unionCheckbox.checked));
+            urlSearchParams.set('input-kerning', String(_this.kerningCheckbox.checked));
+            urlSearchParams.set('input-separate', String(_this.separateCheckbox.checked));
+            urlSearchParams.set('input-text', _this.textInput.value);
+            urlSearchParams.set('input-bezier-accuracy', _this.bezierAccuracy.value);
+            urlSearchParams.set('input-size', _this.sizeInput.value);
+            var url = window.location.protocol
+                + "//" + window.location.host
+                + window.location.pathname
+                + "?"
+                + urlSearchParams.toString();
+            window.history.replaceState({ path: url }, "", url);
+        };
     }
-    App.prototype.updateUrl = function () {
-        var urlSearchParams = new URLSearchParams(window.location.search);
-        urlSearchParams.set('font-select', this.selectFamily.value);
-        urlSearchParams.set('font-variant', this.selectVariant.value);
-        urlSearchParams.set('input-union', String(this.unionCheckbox.checked));
-        urlSearchParams.set('input-kerning', String(this.kerningCheckbox.checked));
-        urlSearchParams.set('input-separate', String(this.separateCheckbox.checked));
-        urlSearchParams.set('input-text', this.textInput.value);
-        urlSearchParams.set('input-bezier-accuracy', this.bezierAccuracy.value);
-        urlSearchParams.set('input-size', this.sizeInput.value);
-        var url = window.location.protocol
-            + "//" + window.location.host
-            + window.location.pathname
-            + "?"
-            + urlSearchParams.toString();
-        window.history.replaceState({ path: url }, "", url);
-    };
     App.prototype.init = function () {
         this.selectFamily = this.$('#font-select');
         this.selectVariant = this.$('#font-variant');
@@ -61,8 +60,8 @@ var App = /** @class */ (function () {
         this.renderDiv = this.$('#svg-render');
         this.outputTextarea = this.$('#output-svg');
         this.downloadButton = this.$("#download-btn");
+        this.createLinkButton = this.$("#create-link");
         this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn");
-        this.readQueryParams();
     };
     App.prototype.readQueryParams = function () {
         var urlSearchParams = new URLSearchParams(window.location.search);
@@ -74,7 +73,6 @@ var App = /** @class */ (function () {
         var textInput = urlSearchParams.get('input-text');
         var bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
         var sizeInput = urlSearchParams.get('input-size');
-        console.log(unionCheckbox);
         if (selectFamily !== "")
             this.selectFamily.value = selectFamily;
         if (selectVariant !== "")
@@ -106,6 +104,7 @@ var App = /** @class */ (function () {
                                             this.renderCurrent;
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
         this.downloadButton.onclick = this.downloadSvg;
+        this.createLinkButton.onclick = this.updateUrl;
     };
     App.prototype.$ = function (selector) {
         return document.querySelector(selector);
@@ -122,17 +121,16 @@ var App = /** @class */ (function () {
         xhr.open('get', 'https://www.googleapis.com/webfonts/v1/webfonts?key=' + apiKey, true);
         xhr.onloadend = function () {
             _this.fontList = JSON.parse(xhr.responseText);
-            console.log(_this.fontList);
             _this.fontList.items.forEach(function (font) { return _this.addOption(_this.selectFamily, font.family); });
             _this.loadVariants();
             _this.handleEvents();
             _this.readQueryParams();
+            _this.renderCurrent();
         };
         xhr.send();
     };
     App.prototype.render = function (fontIndex, variantIndex, text, size, union, kerning, separate, bezierAccuracy) {
         var _this = this;
-        // debugger;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
         var url = f.files[v].substring(5); //remove http:
