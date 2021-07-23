@@ -5,6 +5,8 @@ var makerjs = require('makerjs') as typeof MakerJs;
 class App {
 
     public fontList: google.fonts.WebfontList;
+    private fileUpload: HTMLInputElement
+    private customFont: opentype.Font;
     private selectFamily: HTMLSelectElement;
     private selectVariant: HTMLSelectElement;
     private unionCheckbox: HTMLInputElement;
@@ -73,12 +75,29 @@ class App {
 
         window.history.replaceState({path: url}, "", url)
     }
+    private readUploadedFile = async (event: Event) => {
+        const element = event.currentTarget as HTMLInputElement;
+
+        if (element.files.length === 0) {
+          this.customFont = undefined;
+        } else {
+          var files = element.files[0];
+
+          var buffer = await files.arrayBuffer();
+
+          var font = opentype.parse(buffer);
+
+          this.customFont = font;
+        }
+        this.renderCurrent();
+    }
     constructor() {
 
     }
 
     init() {
 
+        this.fileUpload = this.$('#font-upload') as HTMLInputElement;
         this.selectFamily = this.$('#font-select') as HTMLSelectElement;
         this.selectVariant = this.$('#font-variant') as HTMLSelectElement;
         this.unionCheckbox = this.$('#input-union') as HTMLInputElement;
@@ -107,25 +126,25 @@ class App {
         var bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
         var sizeInput = urlSearchParams.get('input-size');
 
-        if (selectFamily !== "")
+        if (selectFamily !== "" && selectFamily !== null)
             this.selectFamily.value = selectFamily;
         
-        if (selectVariant !== "")
+        if (selectVariant !== "" && selectVariant !== null)
             this.selectVariant.value = selectVariant;
 
-        if (unionCheckbox !== "")
+        if (unionCheckbox !== "" && unionCheckbox !== null)
             this.unionCheckbox.checked = unionCheckbox === "true" ? true : false;
 
-        if (kerningCheckbox !== "")
+        if (kerningCheckbox !== "" && kerningCheckbox !== null)
             this.kerningCheckbox.checked = kerningCheckbox === "true" ? true : false;
 
-        if (separateCheckbox !== "")
+        if (separateCheckbox !== "" && separateCheckbox !== null)
             this.separateCheckbox.checked = separateCheckbox === "true" ? true : false;
         
         if (textInput !== "" && textInput !== null)
             this.textInput.value = textInput;
         
-        if (bezierAccuracy !== "")
+        if (bezierAccuracy !== "" && bezierAccuracy !== null)
             this.bezierAccuracy.value = bezierAccuracy;
         
         if (sizeInput !== "" && sizeInput !== null)
@@ -134,6 +153,7 @@ class App {
     }
 
     handleEvents() {
+        this.fileUpload.onchange = this.readUploadedFile;
         this.selectFamily.onchange = this.loadVariants;
         this.selectVariant.onchange =
             this.textInput.onchange =
@@ -178,6 +198,22 @@ class App {
         xhr.send();
     }
 
+    callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, kerning: boolean, separate: boolean, bezierAccuracy: number) {
+        //generate the text using a font
+        var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
+
+        if (separate) {
+            for (var i in textModel.models) {
+                textModel.models[i].layer = i;
+            }
+        }
+
+        var svg = makerjs.exporter.toSVG(textModel);
+
+        this.renderDiv.innerHTML = svg;
+        this.outputTextarea.value = svg;
+    }
+
     render(
         fontIndex: number,
         variantIndex: number,
@@ -193,23 +229,13 @@ class App {
         var v = f.variants[variantIndex];
         var url = f.files[v].substring(5);  //remove http:
 
-        opentype.load(url, (err, font) => {
-
-            //generate the text using a font
-            var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
-
-            if (separate) {
-                for (var i in textModel.models) {
-                    textModel.models[i].layer = i;
-                }
-            }
-
-            var svg = makerjs.exporter.toSVG(textModel);
-
-            this.renderDiv.innerHTML = svg;
-            this.outputTextarea.value = svg;
-        });
-
+        if (this.customFont !== undefined) {
+            this.callMakerjs(this.customFont, text, size, union, kerning, separate, bezierAccuracy);
+        } else {
+            opentype.load(url, (err, font) => {
+                this.callMakerjs(font, text, size, union, kerning, separate, bezierAccuracy);
+            });
+        }
     }
 }
 
