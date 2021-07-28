@@ -6,6 +6,7 @@ class App {
 
     public fontList: google.fonts.WebfontList;
     private fileUpload: HTMLInputElement
+    private fileUploadRemove: HTMLInputElement
     private customFont: opentype.Font;
     private selectFamily: HTMLSelectElement;
     private selectVariant: HTMLSelectElement;
@@ -20,6 +21,7 @@ class App {
     private copyToClipboardBtn: HTMLButtonElement;
     private downloadButton: HTMLAnchorElement;
     private createLinkButton: HTMLAnchorElement;
+    private dummy: HTMLInputElement;
     private renderCurrent = () => {
         var size = this.sizeInput.valueAsNumber;
         if (!size) size = parseFloat(this.sizeInput.value);
@@ -74,6 +76,19 @@ class App {
                     + urlSearchParams.toString();
 
         window.history.replaceState({path: url}, "", url)
+
+        this.copyString(window.location.href)
+        this.createLinkButton.innerText = 'copied';
+        setTimeout(() => {
+            this.createLinkButton.innerText = 'create link';
+        }, 2000)
+    }
+    private copyString = (string: string) => {
+        this.dummy.value = string;
+        this.dummy.type = 'text';
+        this.dummy.select();
+        document.execCommand('copy');
+        this.dummy.type = 'hidden';
     }
     private readUploadedFile = async (event: Event) => {
         const element = event.currentTarget as HTMLInputElement;
@@ -91,6 +106,11 @@ class App {
         }
         this.renderCurrent();
     }
+    private removeUploadedFont = () => {
+        this.fileUpload.value = null;
+        this.customFont = undefined;
+        this.renderCurrent();
+    }
     constructor() {
 
     }
@@ -98,6 +118,7 @@ class App {
     init() {
 
         this.fileUpload = this.$('#font-upload') as HTMLInputElement;
+        this.fileUploadRemove = this.$('#font-upload-remove') as HTMLInputElement;
         this.selectFamily = this.$('#font-select') as HTMLSelectElement;
         this.selectVariant = this.$('#font-variant') as HTMLSelectElement;
         this.unionCheckbox = this.$('#input-union') as HTMLInputElement;
@@ -111,6 +132,7 @@ class App {
         this.downloadButton = this.$("#download-btn") as HTMLAnchorElement;
         this.createLinkButton = this.$("#create-link") as HTMLAnchorElement;
         this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn") as HTMLButtonElement;
+        this.dummy = this.$('#dummy') as HTMLInputElement;
 
     }
 
@@ -154,6 +176,7 @@ class App {
 
     handleEvents() {
         this.fileUpload.onchange = this.readUploadedFile;
+        this.fileUploadRemove.onclick = this.removeUploadedFont
         this.selectFamily.onchange = this.loadVariants;
         this.selectVariant.onchange =
             this.textInput.onchange =
