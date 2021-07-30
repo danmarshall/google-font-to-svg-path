@@ -82,6 +82,18 @@ var App = /** @class */ (function () {
                 + "?"
                 + urlSearchParams.toString();
             window.history.replaceState({ path: url }, "", url);
+            _this.copyString(window.location.href);
+            _this.createLinkButton.innerText = 'copied';
+            setTimeout(function () {
+                _this.createLinkButton.innerText = 'create link';
+            }, 2000);
+        };
+        this.copyString = function (string) {
+            _this.dummy.value = string;
+            _this.dummy.type = 'text';
+            _this.dummy.select();
+            document.execCommand('copy');
+            _this.dummy.type = 'hidden';
         };
         this.readUploadedFile = function (event) { return __awaiter(_this, void 0, void 0, function () {
             var element, files, buffer, font;
@@ -106,9 +118,15 @@ var App = /** @class */ (function () {
                 }
             });
         }); };
+        this.removeUploadedFont = function () {
+            _this.fileUpload.value = null;
+            _this.customFont = undefined;
+            _this.renderCurrent();
+        };
     }
     App.prototype.init = function () {
         this.fileUpload = this.$('#font-upload');
+        this.fileUploadRemove = this.$('#font-upload-remove');
         this.selectFamily = this.$('#font-select');
         this.selectVariant = this.$('#font-variant');
         this.unionCheckbox = this.$('#input-union');
@@ -122,6 +140,7 @@ var App = /** @class */ (function () {
         this.downloadButton = this.$("#download-btn");
         this.createLinkButton = this.$("#create-link");
         this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn");
+        this.dummy = this.$('#dummy');
     };
     App.prototype.readQueryParams = function () {
         var urlSearchParams = new URLSearchParams(window.location.search);
@@ -152,6 +171,7 @@ var App = /** @class */ (function () {
     };
     App.prototype.handleEvents = function () {
         this.fileUpload.onchange = this.readUploadedFile;
+        this.fileUploadRemove.onclick = this.removeUploadedFont;
         this.selectFamily.onchange = this.loadVariants;
         this.selectVariant.onchange =
             this.textInput.onchange =
