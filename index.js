@@ -241,7 +241,7 @@ var App = /** @class */ (function () {
             }
         }
         var svg = makerjs.exporter.toSVG(textModel, { fill: filled ? 'black' : undefined });
-        var dxf = makerjs.exporter.toDXF(textModel, { units: units, layerOptions: { '0': { color: makerjs.exporter.colors.black, fontSize: 2 } }, usePOLYLINE: true });
+        var dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
         this.renderDiv.innerHTML = svg;
         this.renderDiv.setAttribute('data-dxf', dxf);
         this.outputTextarea.value = svg;
