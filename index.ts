@@ -1,6 +1,8 @@
 ///<reference path="node_modules/makerjs/index.d.ts" />
+////<reference path="node_modules/@jscad/stl-serializer/index.d.ts" />
 
 var makerjs = require('makerjs') as typeof MakerJs;
+// const stlSerializer = require('@jscad/stl-serializer');
 
 class App {
 
@@ -11,15 +13,18 @@ class App {
     private selectFamily: HTMLSelectElement;
     private selectVariant: HTMLSelectElement;
     private unionCheckbox: HTMLInputElement;
+    private filledCheckbox: HTMLInputElement;
     private kerningCheckbox: HTMLInputElement;
     private separateCheckbox: HTMLInputElement;
     private textInput: HTMLInputElement;
     private bezierAccuracy: HTMLInputElement;
+    private selectUnits: HTMLSelectElement;
     private sizeInput: HTMLInputElement;
     private renderDiv: HTMLDivElement;
     private outputTextarea: HTMLTextAreaElement;
     private copyToClipboardBtn: HTMLButtonElement;
     private downloadButton: HTMLAnchorElement;
+    private dxfButton: HTMLAnchorElement;
     private createLinkButton: HTMLAnchorElement;
     private dummy: HTMLInputElement;
     private renderCurrent = () => {
@@ -32,9 +37,11 @@ class App {
             this.textInput.value,
             size,
             this.unionCheckbox.checked,
+            this.filledCheckbox.checked,
             this.kerningCheckbox.checked,
             this.separateCheckbox.checked,
-            parseFloat(this.bezierAccuracy.value) || undefined
+            parseFloat(this.bezierAccuracy.value) || undefined,
+            this.selectUnits.value
         );
     };
 
@@ -49,6 +56,11 @@ class App {
         this.downloadButton.href = 'data:image/svg+xml;base64,' + SvgFile;
         this.downloadButton.download = this.textInput.value;
     };
+    private downloadDxf = () => {
+        var dxfFile = window.btoa(this.renderDiv.getAttribute('data-dxf'));
+        this.dxfButton.href = 'data:application/dxf;base64,' + dxfFile;
+        this.dxfButton.download = this.textInput.value + '.dxf';
+    }
     private copyToClipboard = () => {
         this.outputTextarea.select();
         document.execCommand('copy');
@@ -63,10 +75,12 @@ class App {
         urlSearchParams.set('font-select', this.selectFamily.value);
         urlSearchParams.set('font-variant', this.selectVariant.value);
         urlSearchParams.set('input-union', String(this.unionCheckbox.checked));
+        urlSearchParams.set('input-filled', String(this.filledCheckbox.checked));
         urlSearchParams.set('input-kerning', String(this.kerningCheckbox.checked));
         urlSearchParams.set('input-separate', String(this.separateCheckbox.checked));
         urlSearchParams.set('input-text', this.textInput.value);
         urlSearchParams.set('input-bezier-accuracy', this.bezierAccuracy.value);
+        urlSearchParams.set('dxf-units', this.selectUnits.value);
         urlSearchParams.set('input-size', this.sizeInput.value);
         
         const url = window.location.protocol 
@@ -122,14 +136,17 @@ class App {
         this.selectFamily = this.$('#font-select') as HTMLSelectElement;
         this.selectVariant = this.$('#font-variant') as HTMLSelectElement;
         this.unionCheckbox = this.$('#input-union') as HTMLInputElement;
+        this.filledCheckbox = this.$('#input-filled') as HTMLInputElement;
         this.kerningCheckbox = this.$('#input-kerning') as HTMLInputElement;
         this.separateCheckbox = this.$('#input-separate') as HTMLInputElement;
         this.textInput = this.$('#input-text') as HTMLInputElement;
         this.bezierAccuracy = this.$('#input-bezier-accuracy') as HTMLInputElement;
+        this.selectUnits = this.$('#dxf-units') as HTMLSelectElement;
         this.sizeInput = this.$('#input-size') as HTMLInputElement;
         this.renderDiv = this.$('#svg-render') as HTMLDivElement;
         this.outputTextarea = this.$('#output-svg') as HTMLTextAreaElement;
         this.downloadButton = this.$("#download-btn") as HTMLAnchorElement;
+        this.dxfButton = this.$("#dxf-btn") as HTMLAnchorElement;
         this.createLinkButton = this.$("#create-link") as HTMLAnchorElement;
         this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn") as HTMLButtonElement;
         this.dummy = this.$('#dummy') as HTMLInputElement;
@@ -142,10 +159,12 @@ class App {
         var selectFamily = urlSearchParams.get('font-select');
         var selectVariant = urlSearchParams.get('font-variant');
         var unionCheckbox = urlSearchParams.get('input-union');
+        var filledCheckbox = urlSearchParams.get('input-filled');
         var kerningCheckbox = urlSearchParams.get('input-kerning');
         var separateCheckbox = urlSearchParams.get('input-separate');
         var textInput = urlSearchParams.get('input-text');
         var bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
+        var selectUnits = urlSearchParams.get('dxf-units');
         var sizeInput = urlSearchParams.get('input-size');
 
         if (selectFamily !== "" && selectFamily !== null)
@@ -154,8 +173,14 @@ class App {
         if (selectVariant !== "" && selectVariant !== null)
             this.selectVariant.value = selectVariant;
 
+        if (selectUnits !== "" && selectUnits !== null)
+            this.selectUnits.value = selectUnits;
+
         if (unionCheckbox !== "" && unionCheckbox !== null)
             this.unionCheckbox.checked = unionCheckbox === "true" ? true : false;
+        
+        if (filledCheckbox !== "" && filledCheckbox !== null)
+            this.filledCheckbox.checked = filledCheckbox === "true" ? true : false;
 
         if (kerningCheckbox !== "" && kerningCheckbox !== null)
             this.kerningCheckbox.checked = kerningCheckbox === "true" ? true : false;
@@ -183,15 +208,18 @@ class App {
             this.textInput.onkeyup =
             this.sizeInput.onkeyup =
             this.unionCheckbox.onchange =
+            this.filledCheckbox.onchange =
             this.kerningCheckbox.onchange =
             this.separateCheckbox.onchange =
             this.bezierAccuracy.onchange =
             this.bezierAccuracy.onkeyup =
+            this.selectUnits.onchange =
             this.renderCurrent
             ;
 
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
         this.downloadButton.onclick = this.downloadSvg;
+        this.dxfButton.onclick = this.downloadDxf;
         this.createLinkButton.onclick = this.updateUrl;
     }
 
@@ -213,6 +241,8 @@ class App {
             this.fontList = JSON.parse(xhr.responseText);
             this.fontList.items.forEach(font => this.addOption(this.selectFamily, font.family));
             this.loadVariants();
+
+            Object.values(makerjs.unitType).forEach(unit => this.addOption(this.selectUnits, unit));
             this.handleEvents();
 
             this.readQueryParams();
@@ -221,7 +251,7 @@ class App {
         xhr.send();
     }
 
-    callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, kerning: boolean, separate: boolean, bezierAccuracy: number) {
+    callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean, bezierAccuracy: number, units: string) {
         //generate the text using a font
         var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
 
@@ -231,9 +261,11 @@ class App {
             }
         }
 
-        var svg = makerjs.exporter.toSVG(textModel);
+        var svg = makerjs.exporter.toSVG(textModel, {fill: filled ? 'black' : undefined});
+        var dxf = makerjs.exporter.toDXF(textModel, {units: units, layerOptions : {'0': {color: makerjs.exporter.colors.black, fontSize: 2} as MakerJs.exporter.IDXFLayerOptions},usePOLYLINE: true});
 
         this.renderDiv.innerHTML = svg;
+        this.renderDiv.setAttribute('data-dxf', dxf);
         this.outputTextarea.value = svg;
     }
 
@@ -243,9 +275,11 @@ class App {
         text: string,
         size: number,
         union: boolean,
+        filled: boolean,
         kerning: boolean,
         separate: boolean,
-        bezierAccuracy: number
+        bezierAccuracy: number,
+        units: string
     ) {
         
         var f = this.fontList.items[fontIndex];
@@ -253,10 +287,10 @@ class App {
         var url = f.files[v].substring(5);  //remove http:
 
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, kerning, separate, bezierAccuracy);
+            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units);
         } else {
             opentype.load(url, (err, font) => {
-                this.callMakerjs(font, text, size, union, kerning, separate, bezierAccuracy);
+                this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units);
             });
         }
     }
