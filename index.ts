@@ -151,6 +151,8 @@ class App {
         this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn") as HTMLButtonElement;
         this.dummy = this.$('#dummy') as HTMLInputElement;
 
+        // Init units select.
+        Object.values(makerjs.unitType).forEach(unit => this.addOption(this.selectUnits, unit));
     }
 
     readQueryParams() {
@@ -242,7 +244,6 @@ class App {
             this.fontList.items.forEach(font => this.addOption(this.selectFamily, font.family));
             this.loadVariants();
 
-            Object.values(makerjs.unitType).forEach(unit => this.addOption(this.selectUnits, unit));
             this.handleEvents();
 
             this.readQueryParams();

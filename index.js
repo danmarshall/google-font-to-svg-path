@@ -134,6 +134,7 @@ var App = /** @class */ (function () {
         };
     }
     App.prototype.init = function () {
+        var _this = this;
         this.fileUpload = this.$('#font-upload');
         this.fileUploadRemove = this.$('#font-upload-remove');
         this.selectFamily = this.$('#font-select');
@@ -153,6 +154,8 @@ var App = /** @class */ (function () {
         this.createLinkButton = this.$("#create-link");
         this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn");
         this.dummy = this.$('#dummy');
+        // Init units select.
+        Object.values(makerjs.unitType).forEach(function (unit) { return _this.addOption(_this.selectUnits, unit); });
     };
     App.prototype.readQueryParams = function () {
         var urlSearchParams = new URLSearchParams(window.location.search);
@@ -225,7 +228,6 @@ var App = /** @class */ (function () {
             _this.fontList = JSON.parse(xhr.responseText);
             _this.fontList.items.forEach(function (font) { return _this.addOption(_this.selectFamily, font.family); });
             _this.loadVariants();
-            Object.values(makerjs.unitType).forEach(function (unit) { return _this.addOption(_this.selectUnits, unit); });
             _this.handleEvents();
             _this.readQueryParams();
             _this.renderCurrent();
