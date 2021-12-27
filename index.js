@@ -1,4 +1,5 @@
 ///<reference path="node_modules/makerjs/index.d.ts" />
+////<reference path="node_modules/@jscad/stl-serializer/index.d.ts" />
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var makerjs = require('makerjs');
+// const stlSerializer = require('@jscad/stl-serializer');
 var App = /** @class */ (function () {
     function App() {
         var _this = this;
@@ -45,7 +47,7 @@ var App = /** @class */ (function () {
                 size = parseFloat(_this.sizeInput.value);
             if (!size)
                 size = 100;
-            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined);
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value);
         };
         this.loadVariants = function () {
             _this.selectVariant.options.length = 0;
@@ -57,6 +59,11 @@ var App = /** @class */ (function () {
             var SvgFile = window.btoa(_this.outputTextarea.value);
             _this.downloadButton.href = 'data:image/svg+xml;base64,' + SvgFile;
             _this.downloadButton.download = _this.textInput.value;
+        };
+        this.downloadDxf = function () {
+            var dxfFile = window.btoa(_this.renderDiv.getAttribute('data-dxf'));
+            _this.dxfButton.href = 'data:application/dxf;base64,' + dxfFile;
+            _this.dxfButton.download = _this.textInput.value + '.dxf';
         };
         this.copyToClipboard = function () {
             _this.outputTextarea.select();
@@ -71,10 +78,12 @@ var App = /** @class */ (function () {
             urlSearchParams.set('font-select', _this.selectFamily.value);
             urlSearchParams.set('font-variant', _this.selectVariant.value);
             urlSearchParams.set('input-union', String(_this.unionCheckbox.checked));
+            urlSearchParams.set('input-filled', String(_this.filledCheckbox.checked));
             urlSearchParams.set('input-kerning', String(_this.kerningCheckbox.checked));
             urlSearchParams.set('input-separate', String(_this.separateCheckbox.checked));
             urlSearchParams.set('input-text', _this.textInput.value);
             urlSearchParams.set('input-bezier-accuracy', _this.bezierAccuracy.value);
+            urlSearchParams.set('dxf-units', _this.selectUnits.value);
             urlSearchParams.set('input-size', _this.sizeInput.value);
             var url = window.location.protocol
                 + "//" + window.location.host
@@ -125,39 +134,51 @@ var App = /** @class */ (function () {
         };
     }
     App.prototype.init = function () {
+        var _this = this;
         this.fileUpload = this.$('#font-upload');
         this.fileUploadRemove = this.$('#font-upload-remove');
         this.selectFamily = this.$('#font-select');
         this.selectVariant = this.$('#font-variant');
         this.unionCheckbox = this.$('#input-union');
+        this.filledCheckbox = this.$('#input-filled');
         this.kerningCheckbox = this.$('#input-kerning');
         this.separateCheckbox = this.$('#input-separate');
         this.textInput = this.$('#input-text');
         this.bezierAccuracy = this.$('#input-bezier-accuracy');
+        this.selectUnits = this.$('#dxf-units');
         this.sizeInput = this.$('#input-size');
         this.renderDiv = this.$('#svg-render');
         this.outputTextarea = this.$('#output-svg');
         this.downloadButton = this.$("#download-btn");
+        this.dxfButton = this.$("#dxf-btn");
         this.createLinkButton = this.$("#create-link");
         this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn");
         this.dummy = this.$('#dummy');
+        // Init units select.
+        Object.values(makerjs.unitType).forEach(function (unit) { return _this.addOption(_this.selectUnits, unit); });
     };
     App.prototype.readQueryParams = function () {
         var urlSearchParams = new URLSearchParams(window.location.search);
         var selectFamily = urlSearchParams.get('font-select');
         var selectVariant = urlSearchParams.get('font-variant');
         var unionCheckbox = urlSearchParams.get('input-union');
+        var filledCheckbox = urlSearchParams.get('input-filled');
         var kerningCheckbox = urlSearchParams.get('input-kerning');
         var separateCheckbox = urlSearchParams.get('input-separate');
         var textInput = urlSearchParams.get('input-text');
         var bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
+        var selectUnits = urlSearchParams.get('dxf-units');
         var sizeInput = urlSearchParams.get('input-size');
         if (selectFamily !== "" && selectFamily !== null)
             this.selectFamily.value = selectFamily;
         if (selectVariant !== "" && selectVariant !== null)
             this.selectVariant.value = selectVariant;
+        if (selectUnits !== "" && selectUnits !== null)
+            this.selectUnits.value = selectUnits;
         if (unionCheckbox !== "" && unionCheckbox !== null)
             this.unionCheckbox.checked = unionCheckbox === "true" ? true : false;
+        if (filledCheckbox !== "" && filledCheckbox !== null)
+            this.filledCheckbox.checked = filledCheckbox === "true" ? true : false;
         if (kerningCheckbox !== "" && kerningCheckbox !== null)
             this.kerningCheckbox.checked = kerningCheckbox === "true" ? true : false;
         if (separateCheckbox !== "" && separateCheckbox !== null)
@@ -178,13 +199,16 @@ var App = /** @class */ (function () {
                 this.textInput.onkeyup =
                     this.sizeInput.onkeyup =
                         this.unionCheckbox.onchange =
-                            this.kerningCheckbox.onchange =
-                                this.separateCheckbox.onchange =
-                                    this.bezierAccuracy.onchange =
-                                        this.bezierAccuracy.onkeyup =
-                                            this.renderCurrent;
+                            this.filledCheckbox.onchange =
+                                this.kerningCheckbox.onchange =
+                                    this.separateCheckbox.onchange =
+                                        this.bezierAccuracy.onchange =
+                                            this.bezierAccuracy.onkeyup =
+                                                this.selectUnits.onchange =
+                                                    this.renderCurrent;
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
         this.downloadButton.onclick = this.downloadSvg;
+        this.dxfButton.onclick = this.downloadDxf;
         this.createLinkButton.onclick = this.updateUrl;
     };
     App.prototype.$ = function (selector) {
@@ -210,7 +234,7 @@ var App = /** @class */ (function () {
         };
         xhr.send();
     };
-    App.prototype.callMakerjs = function (font, text, size, union, kerning, separate, bezierAccuracy) {
+    App.prototype.callMakerjs = function (font, text, size, union, filled, kerning, separate, bezierAccuracy, units) {
         //generate the text using a font
         var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning: kerning });
         if (separate) {
@@ -218,21 +242,23 @@ var App = /** @class */ (function () {
                 textModel.models[i].layer = i;
             }
         }
-        var svg = makerjs.exporter.toSVG(textModel);
+        var svg = makerjs.exporter.toSVG(textModel, { fill: filled ? 'black' : undefined });
+        var dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
         this.renderDiv.innerHTML = svg;
+        this.renderDiv.setAttribute('data-dxf', dxf);
         this.outputTextarea.value = svg;
     };
-    App.prototype.render = function (fontIndex, variantIndex, text, size, union, kerning, separate, bezierAccuracy) {
+    App.prototype.render = function (fontIndex, variantIndex, text, size, union, filled, kerning, separate, bezierAccuracy, units) {
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
         var url = f.files[v].substring(5); //remove http:
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, kerning, separate, bezierAccuracy);
+            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units);
         }
         else {
             opentype.load(url, function (err, font) {
-                _this.callMakerjs(font, text, size, union, kerning, separate, bezierAccuracy);
+                _this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units);
             });
         }
     };

@@ -57,6 +57,10 @@
                 <label>kerning: <input type="checkbox" id="input-kerning" checked /></label>
             </div>
 
+            <div class="input-holder">
+                <label>fill: <input type="checkbox" id="input-filled" checked /></label>
+            </div>
+
             <div class="input-holder"><label>separate characters: <input type="checkbox" id="input-separate" /></label>
             </div>
 
@@ -64,6 +68,10 @@
                 <label>bezier accuracy <span
                         title="0.5 = accurate to half a pixel &#013;.001 = accurate to 1/1000th of a pixel &#013;smaller numbers take longer to compute &#013;leave blank for auto">&#128712;</span>
                     : <input type="text" id="input-bezier-accuracy" placeholder="auto" class="input" /></label>
+            </div>
+
+            <div class="input-holder">
+                <label>Dxf Units: <select id="dxf-units" class="input"></select></label>
             </div>
 
             <div id="svg-render"></div>
@@ -74,6 +82,7 @@
                     <button class="btn" id="copy-to-clipboard-btn">copy to clipboard</button>
                     <a id="download-btn" class="btn">Download Svg</a>
                     <a id="create-link" class="btn">Create link</a>
+                    <a id="dxf-btn" class="btn">Download Dxf</a>
                 </div>
             </div>
         </div>
