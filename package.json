@@ -4,7 +4,7 @@
   "description": "Create an SVG path from a Google font",
   "main": "index.js",
   "scripts": {
-    "build": "tsc -v && tsc ./index.ts",
+    "build": "tsc ./index.ts",
     "start": "http-server -c-1 -o",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
