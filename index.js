@@ -226,8 +226,8 @@ var App = /** @class */ (function () {
                                                                     this.strokeWidthInput.onchange =
                                                                         this.strokeWidthInput.onkeyup =
                                                                             this.renderCurrent;
-        // 
-        document.addEventListener("input", debounce(this.renderCurrent));
+        // Is triggered on the document whenever a new color is picked
+        document.addEventListener("coloris:pick", debounce(this.renderCurrent));
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
         this.downloadButton.onclick = this.downloadSvg;
         this.dxfButton.onclick = this.downloadDxf;
@@ -295,6 +295,14 @@ window.onload = function () {
     app.init();
     app.getGoogleFonts('AIzaSyAOES8EmKhuJEnsn9kS1XKBpxxp-TgN8Jc');
 };
+/**
+ * Creates and returns a new debounced version of the passed function that will
+ * postpone its execution until after wait milliseconds have elapsed since the last time it was invoked.
+ *
+ * @param callback
+ * @param wait
+ * @returns
+ */
 function debounce(callback, wait) {
     if (wait === void 0) { wait = 200; }
     var timeoutId = null;
