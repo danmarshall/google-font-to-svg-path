@@ -46,7 +46,7 @@ var App = /** @class */ (function () {
                 size = parseFloat(_this.sizeInput.value);
             if (!size)
                 size = 100;
-            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value);
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value, _this.strokeWidthInput.value);
         };
         this.loadVariants = function () {
             _this.selectVariant.options.length = 0;
@@ -86,6 +86,7 @@ var App = /** @class */ (function () {
             urlSearchParams.set('input-size', _this.sizeInput.value);
             urlSearchParams.set('input-fill', _this.fillInput.value);
             urlSearchParams.set('input-stroke', _this.strokeInput.value);
+            urlSearchParams.set('input-strokeWidth', _this.strokeWidthInput.value);
             var url = window.location.protocol
                 + "//" + window.location.host
                 + window.location.pathname
@@ -157,6 +158,7 @@ var App = /** @class */ (function () {
         this.dummy = this.$('#dummy');
         this.fillInput = this.$('#input-fill');
         this.strokeInput = this.$('#input-stroke');
+        this.strokeWidthInput = this.$('#input-stroke-width');
         // Init units select.
         Object.values(makerjs.unitType).forEach(function (unit) { return _this.addOption(_this.selectUnits, unit); });
     };
@@ -174,6 +176,7 @@ var App = /** @class */ (function () {
         var sizeInput = urlSearchParams.get('input-size');
         var fillInput = urlSearchParams.get('input-fill');
         var strokeInput = urlSearchParams.get('input-stroke');
+        var strokeWidthInput = urlSearchParams.get('input-stroke-width');
         if (selectFamily !== "" && selectFamily !== null)
             this.selectFamily.value = selectFamily;
         if (selectVariant !== "" && selectVariant !== null)
@@ -198,6 +201,8 @@ var App = /** @class */ (function () {
             this.fillInput.value = fillInput;
         if (strokeInput !== "" && strokeInput !== null)
             this.strokeInput.value = strokeInput;
+        if (strokeWidthInput !== "" && strokeWidthInput !== null)
+            this.strokeWidthInput.value = strokeWidthInput;
     };
     App.prototype.handleEvents = function () {
         this.fileUpload.onchange = this.readUploadedFile;
@@ -218,7 +223,11 @@ var App = /** @class */ (function () {
                                                         this.fillInput.onkeyup =
                                                             this.strokeInput.onchange =
                                                                 this.strokeInput.onkeyup =
-                                                                    this.renderCurrent;
+                                                                    this.strokeWidthInput.onchange =
+                                                                        this.strokeWidthInput.onkeyup =
+                                                                            this.renderCurrent;
+        // 
+        document.addEventListener("input", debounce(this.renderCurrent));
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
         this.downloadButton.onclick = this.downloadSvg;
         this.dxfButton.onclick = this.downloadDxf;
@@ -247,7 +256,7 @@ var App = /** @class */ (function () {
         };
         xhr.send();
     };
-    App.prototype.callMakerjs = function (font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke) {
+    App.prototype.callMakerjs = function (font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth) {
         //generate the text using a font
         var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning: kerning });
         if (separate) {
@@ -255,23 +264,27 @@ var App = /** @class */ (function () {
                 textModel.models[i].layer = i;
             }
         }
-        var svg = makerjs.exporter.toSVG(textModel, { fill: filled ? fill : undefined, stroke: stroke });
+        var svg = makerjs.exporter.toSVG(textModel, {
+            fill: filled ? fill : undefined,
+            stroke: stroke ? stroke : undefined,
+            strokeWidth: strokeWidth ? strokeWidth : undefined
+        });
         var dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
         this.renderDiv.innerHTML = svg;
         this.renderDiv.setAttribute('data-dxf', dxf);
         this.outputTextarea.value = svg;
     };
-    App.prototype.render = function (fontIndex, variantIndex, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke) {
+    App.prototype.render = function (fontIndex, variantIndex, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth) {
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
         var url = f.files[v].substring(5); //remove http:
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke);
+            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth);
         }
         else {
             opentype.load(url, function (err, font) {
-                _this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke);
+                _this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth);
             });
         }
     };
@@ -282,3 +295,17 @@ window.onload = function () {
     app.init();
     app.getGoogleFonts('AIzaSyAOES8EmKhuJEnsn9kS1XKBpxxp-TgN8Jc');
 };
+function debounce(callback, wait) {
+    if (wait === void 0) { wait = 200; }
+    var timeoutId = null;
+    return function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        window.clearTimeout(timeoutId);
+        timeoutId = window.setTimeout(function () {
+            callback.apply(null, args);
+        }, wait);
+    };
+}
