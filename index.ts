@@ -27,6 +27,10 @@ class App {
     private dxfButton: HTMLAnchorElement;
     private createLinkButton: HTMLAnchorElement;
     private dummy: HTMLInputElement;
+    private fillInput: HTMLInputElement;
+    private strokeInput: HTMLInputElement;
+    private strokeWidthInput: HTMLInputElement;
+
     private renderCurrent = () => {
         var size = this.sizeInput.valueAsNumber;
         if (!size) size = parseFloat(this.sizeInput.value);
@@ -41,7 +45,10 @@ class App {
             this.kerningCheckbox.checked,
             this.separateCheckbox.checked,
             parseFloat(this.bezierAccuracy.value) || undefined,
-            this.selectUnits.value
+            this.selectUnits.value,
+            this.fillInput.value,
+            this.strokeInput.value,
+            this.strokeWidthInput.value,
         );
     };
 
@@ -82,6 +89,9 @@ class App {
         urlSearchParams.set('input-bezier-accuracy', this.bezierAccuracy.value);
         urlSearchParams.set('dxf-units', this.selectUnits.value);
         urlSearchParams.set('input-size', this.sizeInput.value);
+        urlSearchParams.set('input-fill', this.fillInput.value);
+        urlSearchParams.set('input-stroke', this.strokeInput.value);
+        urlSearchParams.set('input-strokeWidth', this.strokeWidthInput.value);
         
         const url = window.location.protocol 
                     + "//" + window.location.host 
@@ -125,6 +135,7 @@ class App {
         this.customFont = undefined;
         this.renderCurrent();
     }
+
     constructor() {
 
     }
@@ -150,6 +161,9 @@ class App {
         this.createLinkButton = this.$("#create-link") as HTMLAnchorElement;
         this.copyToClipboardBtn = this.$("#copy-to-clipboard-btn") as HTMLButtonElement;
         this.dummy = this.$('#dummy') as HTMLInputElement;
+        this.fillInput = this.$('#input-fill') as HTMLInputElement;
+        this.strokeInput = this.$('#input-stroke') as HTMLInputElement;
+        this.strokeWidthInput = this.$('#input-stroke-width') as HTMLInputElement;
 
         // Init units select.
         Object.values(makerjs.unitType).forEach(unit => this.addOption(this.selectUnits, unit));
@@ -168,6 +182,10 @@ class App {
         var bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
         var selectUnits = urlSearchParams.get('dxf-units');
         var sizeInput = urlSearchParams.get('input-size');
+        var fillInput = urlSearchParams.get('input-fill');
+        var strokeInput = urlSearchParams.get('input-stroke');
+        var strokeWidthInput = urlSearchParams.get('input-stroke-width');
+
 
         if (selectFamily !== "" && selectFamily !== null)
             this.selectFamily.value = selectFamily;
@@ -199,6 +217,15 @@ class App {
         if (sizeInput !== "" && sizeInput !== null)
             this.sizeInput.value = sizeInput;
 
+        if (fillInput !== "" && fillInput !== null)
+            this.fillInput.value = fillInput;
+
+        if (strokeInput !== "" && strokeInput !== null)
+            this.strokeInput.value = strokeInput;
+        
+        if (strokeWidthInput !== "" && strokeWidthInput !== null)
+            this.strokeWidthInput.value = strokeWidthInput;
+
     }
 
     handleEvents() {
@@ -216,9 +243,18 @@ class App {
             this.bezierAccuracy.onchange =
             this.bezierAccuracy.onkeyup =
             this.selectUnits.onchange =
+            this.fillInput.onchange =
+            this.fillInput.onkeyup =
+            this.strokeInput.onchange =
+            this.strokeInput.onkeyup =
+            this.strokeWidthInput.onchange =
+            this.strokeWidthInput.onkeyup =
             this.renderCurrent
             ;
 
+        // Is triggered on the document whenever a new color is picked
+        document.addEventListener("coloris:pick", debounce(this.renderCurrent))
+    
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
         this.downloadButton.onclick = this.downloadSvg;
         this.dxfButton.onclick = this.downloadDxf;
@@ -252,7 +288,8 @@ class App {
         xhr.send();
     }
 
-    callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean, bezierAccuracy: number, units: string) {
+    callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean,
+         bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string) {
         //generate the text using a font
         var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
 
@@ -262,7 +299,11 @@ class App {
             }
         }
 
-        var svg = makerjs.exporter.toSVG(textModel, {fill: filled ? 'black' : undefined});
+        var svg = makerjs.exporter.toSVG(textModel, {
+                fill: filled ? fill : undefined,
+                stroke: stroke ? stroke : undefined, 
+                strokeWidth: strokeWidth ? strokeWidth : undefined
+            });
         var dxf = makerjs.exporter.toDXF(textModel, {units: units, usePOLYLINE: true});
 
         this.renderDiv.innerHTML = svg;
@@ -280,7 +321,10 @@ class App {
         kerning: boolean,
         separate: boolean,
         bezierAccuracy: number,
-        units: string
+        units: string,
+        fill: string,
+        stroke: string,
+        strokeWidth: string,
     ) {
         
         var f = this.fontList.items[fontIndex];
@@ -288,10 +332,10 @@ class App {
         var url = f.files[v].substring(5);  //remove http:
 
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units);
+            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth);
         } else {
             opentype.load(url, (err, font) => {
-                this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units);
+                this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth);
             });
         }
     }
@@ -303,3 +347,22 @@ window.onload = () => {
     app.init();
     app.getGoogleFonts('AIzaSyAOES8EmKhuJEnsn9kS1XKBpxxp-TgN8Jc');
 };
+
+/**
+ * Creates and returns a new debounced version of the passed function that will
+ * postpone its execution until after wait milliseconds have elapsed since the last time it was invoked.
+ * 
+ * @param callback 
+ * @param wait 
+ * @returns 
+ */
+function debounce(callback, wait = 200) {
+    let timeoutId = null;
+
+    return (...args) => {
+      window.clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(() => {
+        callback.apply(null, args);
+      }, wait);
+    };
+  }
