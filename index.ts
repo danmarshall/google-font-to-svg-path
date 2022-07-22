@@ -4,6 +4,9 @@
 var makerjs = require('makerjs') as typeof MakerJs;
 // const stlSerializer = require('@jscad/stl-serializer');
 
+
+type FillRule = 'nonzero' | 'evenodd';
+
 class App {
 
     public fontList: google.fonts.WebfontList;
@@ -30,6 +33,7 @@ class App {
     private fillInput: HTMLInputElement;
     private strokeInput: HTMLInputElement;
     private strokeWidthInput: HTMLInputElement;
+    private fillRuleInput: HTMLSelectElement;
 
     private renderCurrent = () => {
         var size = this.sizeInput.valueAsNumber;
@@ -49,6 +53,7 @@ class App {
             this.fillInput.value,
             this.strokeInput.value,
             this.strokeWidthInput.value,
+            this.fillRuleInput.value,
         );
     };
 
@@ -92,6 +97,7 @@ class App {
         urlSearchParams.set('input-fill', this.fillInput.value);
         urlSearchParams.set('input-stroke', this.strokeInput.value);
         urlSearchParams.set('input-strokeWidth', this.strokeWidthInput.value);
+        urlSearchParams.set('input-fill-rule', this.fillRuleInput.value);
         
         const url = window.location.protocol 
                     + "//" + window.location.host 
@@ -164,6 +170,7 @@ class App {
         this.fillInput = this.$('#input-fill') as HTMLInputElement;
         this.strokeInput = this.$('#input-stroke') as HTMLInputElement;
         this.strokeWidthInput = this.$('#input-stroke-width') as HTMLInputElement;
+        this.fillRuleInput = this.$("#input-fill-rule") as HTMLSelectElement;
 
         // Init units select.
         Object.values(makerjs.unitType).forEach(unit => this.addOption(this.selectUnits, unit));
@@ -185,6 +192,7 @@ class App {
         var fillInput = urlSearchParams.get('input-fill');
         var strokeInput = urlSearchParams.get('input-stroke');
         var strokeWidthInput = urlSearchParams.get('input-stroke-width');
+        var fillRuleInput = urlSearchParams.get('input-fill-rule');
 
 
         if (selectFamily !== "" && selectFamily !== null)
@@ -226,6 +234,9 @@ class App {
         if (strokeWidthInput !== "" && strokeWidthInput !== null)
             this.strokeWidthInput.value = strokeWidthInput;
 
+        if (fillRuleInput !== "" && fillRuleInput !== null)
+            this.fillRuleInput.value = fillRuleInput;
+        
     }
 
     handleEvents() {
@@ -249,6 +260,7 @@ class App {
             this.strokeInput.onkeyup =
             this.strokeWidthInput.onchange =
             this.strokeWidthInput.onkeyup =
+            this.fillRuleInput.onchange =
             this.renderCurrent
             ;
 
@@ -289,7 +301,7 @@ class App {
     }
 
     callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean,
-         bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string) {
+         bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, fillRule: FillRule) {
         //generate the text using a font
         var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
 
@@ -302,7 +314,8 @@ class App {
         var svg = makerjs.exporter.toSVG(textModel, {
                 fill: filled ? fill : undefined,
                 stroke: stroke ? stroke : undefined, 
-                strokeWidth: strokeWidth ? strokeWidth : undefined
+                strokeWidth: strokeWidth ? strokeWidth : undefined,
+                fillRule: fillRule ? fillRule : undefined,
             });
         var dxf = makerjs.exporter.toDXF(textModel, {units: units, usePOLYLINE: true});
 
@@ -325,6 +338,7 @@ class App {
         fill: string,
         stroke: string,
         strokeWidth: string,
+        fillRule: string,
     ) {
         
         var f = this.fontList.items[fontIndex];
@@ -332,10 +346,10 @@ class App {
         var url = f.files[v].substring(5);  //remove http:
 
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth);
+            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, fillRule);
         } else {
             opentype.load(url, (err, font) => {
-                this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth);
+                this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, fillRule);
             });
         }
     }
