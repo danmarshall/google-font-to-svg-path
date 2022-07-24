@@ -33,6 +33,7 @@ class App {
     private fillInput: HTMLInputElement;
     private strokeInput: HTMLInputElement;
     private strokeWidthInput: HTMLInputElement;
+    private strokeNonScalingCheckbox: HTMLInputElement;
     private fillRuleInput: HTMLSelectElement;
 
     private renderCurrent = () => {
@@ -53,6 +54,7 @@ class App {
             this.fillInput.value,
             this.strokeInput.value,
             this.strokeWidthInput.value,
+            this.strokeNonScalingCheckbox.checked,
             this.fillRuleInput.value,
         );
     };
@@ -170,6 +172,7 @@ class App {
         this.fillInput = this.$('#input-fill') as HTMLInputElement;
         this.strokeInput = this.$('#input-stroke') as HTMLInputElement;
         this.strokeWidthInput = this.$('#input-stroke-width') as HTMLInputElement;
+        this.strokeNonScalingCheckbox = this.$('#input-stroke-non-scaling') as HTMLInputElement;
         this.fillRuleInput = this.$("#input-fill-rule") as HTMLSelectElement;
 
         // Init units select.
@@ -192,6 +195,7 @@ class App {
         var fillInput = urlSearchParams.get('input-fill');
         var strokeInput = urlSearchParams.get('input-stroke');
         var strokeWidthInput = urlSearchParams.get('input-stroke-width');
+        var strokeNonScalingCheckbox = urlSearchParams.get('input-stroke-non-scaling');
         var fillRuleInput = urlSearchParams.get('input-fill-rule');
 
 
@@ -234,6 +238,9 @@ class App {
         if (strokeWidthInput !== "" && strokeWidthInput !== null)
             this.strokeWidthInput.value = strokeWidthInput;
 
+        if (strokeNonScalingCheckbox !== "" && strokeNonScalingCheckbox !== null)
+            this.strokeNonScalingCheckbox.checked = strokeNonScalingCheckbox === "true" ? true : false;
+
         if (fillRuleInput !== "" && fillRuleInput !== null)
             this.fillRuleInput.value = fillRuleInput;
         
@@ -260,6 +267,7 @@ class App {
             this.strokeInput.onkeyup =
             this.strokeWidthInput.onchange =
             this.strokeWidthInput.onkeyup =
+            this.strokeNonScalingCheckbox.onchange =
             this.fillRuleInput.onchange =
             this.renderCurrent
             ;
@@ -301,7 +309,7 @@ class App {
     }
 
     callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean,
-         bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, fillRule: FillRule) {
+         bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
         //generate the text using a font
         var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
 
@@ -316,6 +324,7 @@ class App {
                 stroke: stroke ? stroke : undefined, 
                 strokeWidth: strokeWidth ? strokeWidth : undefined,
                 fillRule: fillRule ? fillRule : undefined,
+                scalingStroke: !strokeNonScaling,
             });
         var dxf = makerjs.exporter.toDXF(textModel, {units: units, usePOLYLINE: true});
 
@@ -338,6 +347,7 @@ class App {
         fill: string,
         stroke: string,
         strokeWidth: string,
+        strokeNonScaling: boolean,
         fillRule: string,
     ) {
         
@@ -346,10 +356,10 @@ class App {
         var url = f.files[v].substring(5);  //remove http:
 
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, fillRule);
+            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
         } else {
             opentype.load(url, (err, font) => {
-                this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, fillRule);
+                this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
             });
         }
     }
