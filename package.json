@@ -29,7 +29,7 @@
     "opentype.js": "^0.7.3"
   },
   "devDependencies": {
-    "http-server": "^0.12.3",
+    "http-server": "^14.1.1",
     "typescript": "2.5.2"
   }
 }
