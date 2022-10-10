@@ -39,3 +39,9 @@ jspm_packages
 #jekyll
 _site
 .jekyll-cache
+
+#xlbr.sh
+xlbr.sh
+
+#note
+note.pug
