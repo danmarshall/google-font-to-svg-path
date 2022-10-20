@@ -1,0 +1,127 @@
+/*rigel.css - wiz - https://github.com/cx0y/rigel*/
+.--rg--grid {
+    display: grid;
+    column-gap: .125rem;
+    row-gap: .125rem;
+    padding: .7%
+}
+
+.--rg--grid--cont {
+    padding: 3%;
+    text-align: center
+}
+
+.--rg--auto {
+    grid-template-columns: auto auto auto
+}
+
+.--rg--auto4 {
+    grid-template-columns: auto auto auto auto
+}
+
+.--rg--auto5 {
+    grid-template-columns: auto auto auto auto auto
+}
+
+.--rg--01 {
+    grid-template-columns: auto
+}
+
+.--rg--73 {
+    grid-template-columns: 70% 30%
+}
+
+.--rg--64 {
+    grid-template-columns: 60% 40%
+}
+
+.--rg--55 {
+    grid-template-columns: 50% 50%
+}
+
+.--rg--46 {
+    grid-template-columns: 40% 60%
+}
+
+.--rg--37 {
+    grid-template-columns: 30% 70%
+}
+
+.--rg--03 {
+    grid-template-columns: 33.33% 33.33% 33.33%
+}
+
+.--rg--02 {
+    grid-template-columns: 50% 50%
+}
+
+
+
+@media (max-width:991px) and (min-width:768px) and (orientation:portrait) {
+    .--rg--grid {
+        display: grid;
+        grid-template-columns: auto auto auto;
+        column-gap: .125rem;
+        padding: 3%
+    }
+}
+
+.--rg--plx {
+    perspective: 1px;
+    transform-style: preserve-3d;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: scroll
+}
+
+.--rg--plx0 {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    flex: 1 0 auto;
+    position: relative;
+    z-index: -1;
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    transform: translateZ(-1px) scale(2)
+}
+
+.--rg--plx1 {
+    z-index: 1;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+    margin: 0;
+    display: flex
+}
+
+::-webkit-scrollbar {
+    width: 0
+}
+
+::-webkit-scrollbar-track {
+    background: var(--white)
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--white)
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--white)
+}
+@media (max-width:767px) and (orientation:portrait) {
+    .--rg--grid {
+        display: flex;
+        flex-direction: column;
+        row-gap: .3125rem;
+        padding: 3%
+    }
+
+    .--rg--plx0 {
+        display:none;
+    }
+}

@@ -1,0 +1,20 @@
+:root{
+    --darkThemeBg:#2a2b2b;
+    --darkThemeColor:#eee7e1;
+    --darkThemeBg2:#3a3939;
+}
+::-webkit-scrollbar {
+    width:0;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--white);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--white);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--white);
+}
