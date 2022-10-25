@@ -62,7 +62,7 @@
         display: grid;
         grid-template-columns: auto auto auto;
         column-gap: .125rem;
-        padding: 3%
+        padding: 3%;
     }
 }
 
@@ -95,7 +95,9 @@
     background-repeat: no-repeat;
     position: relative;
     margin: 0;
-    display: flex
+    display: flex;
+    max-width:100vw;
+    overflow-x: scroll;
 }
 
 ::-webkit-scrollbar {
