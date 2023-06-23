@@ -45,13 +45,33 @@ var App = /** @class */ (function () {
                 size = parseFloat(_this.sizeInput.value);
             if (!size)
                 size = 100;
-            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value, _this.strokeWidthInput.value, _this.strokeNonScalingCheckbox.checked, _this.fillRuleInput.value);
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value, _this.strokeWidthInput.value, _this.strokeNonScalingCheckbox.checked, _this.fillRuleInput.value, _this.renderSvgDiv);
         };
         this.loadVariants = function () {
             _this.selectVariant.options.length = 0;
             var f = _this.fontList.items[_this.selectFamily.selectedIndex];
             var v = f.variants.forEach(function (v) { return _this.addOption(_this.selectVariant, v); });
             _this.renderCurrent();
+        };
+        this.appendPreviewFontDivElement = function (family, _a) {
+            var svg = _a.svg, dxf = _a.dxf;
+            var previewFontDiv = document.createElement('div');
+            var tooltip = document.createElement('span');
+            previewFontDiv.classList.add('tooltip');
+            tooltip.classList.add('tooltiptext');
+            previewFontDiv.innerHTML = svg;
+            tooltip.innerText = family;
+            previewFontDiv.append(tooltip);
+            previewFontDiv.addEventListener('click', function () {
+                _this.renderSvgDiv(family, { svg: svg, dxf: dxf });
+            });
+            _this.previewRenderDiv.append(previewFontDiv);
+        };
+        this.loadFontPreviewDivs = function (additionalFontSize) {
+            _this.fontList.items.slice().slice(_this.previewFontLength, _this.previewFontLength + additionalFontSize).forEach(function (font, index) {
+                _this.render(index, _this.selectVariant.selectedIndex, _this.textInput.value, 50, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value, _this.strokeWidthInput.value, _this.strokeNonScalingCheckbox.checked, _this.fillRuleInput.value, _this.appendPreviewFontDivElement);
+            });
+            _this.previewFontLength += additionalFontSize;
         };
         this.downloadSvg = function () {
             var SvgFile = window.btoa(_this.outputTextarea.value);
@@ -70,6 +90,20 @@ var App = /** @class */ (function () {
             setTimeout(function () {
                 _this.copyToClipboardBtn.innerText = 'copy to clipboard';
             }, 2000);
+        };
+        this.renderSvgDiv = function (family, _a) {
+            var svg = _a.svg, dxf = _a.dxf;
+            _this.renderDiv.innerHTML = svg;
+            _this.renderDiv.setAttribute('data-dxf', dxf);
+            _this.outputTextarea.value = svg;
+        };
+        this.appendPreviewFont = function () {
+            _this.loadFontPreviewDivs(30);
+            _this.previewRenderDiv.hidden = false;
+        };
+        this.clickHiddenPreviewButton = function () {
+            _this.previewRenderDiv.hidden = _this.previewRenderDiv.hidden ? false : true;
+            _this.previewClearButton.innerHTML = _this.previewRenderDiv.hidden ? "Show" : "Hidden";
         };
         this.updateUrl = function () {
             var urlSearchParams = new URLSearchParams(window.location.search);
@@ -161,6 +195,10 @@ var App = /** @class */ (function () {
         this.strokeWidthInput = this.$('#input-stroke-width');
         this.strokeNonScalingCheckbox = this.$('#input-stroke-non-scaling');
         this.fillRuleInput = this.$("#input-fill-rule");
+        this.previewRenderDiv = this.$('#preview-render');
+        this.previewButton = this.$('#font-preview-btn');
+        this.previewClearButton = this.$('#font-preview-clear-btn');
+        this.previewFontLength = 0;
         // Init units select.
         Object.values(makerjs.unitType).forEach(function (unit) { return _this.addOption(_this.selectUnits, unit); });
     };
@@ -240,6 +278,8 @@ var App = /** @class */ (function () {
         document.addEventListener("coloris:pick", debounce(this.renderCurrent));
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
         this.downloadButton.onclick = this.downloadSvg;
+        this.previewClearButton.onclick = this.clickHiddenPreviewButton;
+        this.previewButton.onclick = this.appendPreviewFont;
         this.dxfButton.onclick = this.downloadDxf;
         this.createLinkButton.onclick = this.updateUrl;
     };
@@ -282,21 +322,22 @@ var App = /** @class */ (function () {
             scalingStroke: !strokeNonScaling
         });
         var dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
-        this.renderDiv.innerHTML = svg;
-        this.renderDiv.setAttribute('data-dxf', dxf);
-        this.outputTextarea.value = svg;
+        return {
+            svg: svg,
+            dxf: dxf
+        };
     };
-    App.prototype.render = function (fontIndex, variantIndex, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule) {
+    App.prototype.render = function (fontIndex, variantIndex, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule, callback) {
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
         var url = f.files[v].substring(5); //remove http:
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+            callback(f.family, this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule));
         }
         else {
             opentype.load(url, function (err, font) {
-                _this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                callback(f.family, _this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule));
             });
         }
     };

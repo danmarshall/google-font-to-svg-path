@@ -35,6 +35,10 @@ class App {
     private strokeWidthInput: HTMLInputElement;
     private strokeNonScalingCheckbox: HTMLInputElement;
     private fillRuleInput: HTMLSelectElement;
+    private previewRenderDiv: HTMLDivElement;
+    private previewButton: HTMLButtonElement;
+    private previewClearButton : HTMLButtonElement;
+    private previewFontLength: number;
 
     private renderCurrent = () => {
         var size = this.sizeInput.valueAsNumber;
@@ -56,6 +60,7 @@ class App {
             this.strokeWidthInput.value,
             this.strokeNonScalingCheckbox.checked,
             this.fillRuleInput.value,
+            this.renderSvgDiv,
         );
     };
 
@@ -65,6 +70,47 @@ class App {
         var v = f.variants.forEach(v => this.addOption(this.selectVariant, v));
         this.renderCurrent();
     };
+
+    private appendPreviewFontDivElement = (family: string, {svg, dxf}) => {
+        const previewFontDiv = document.createElement('div');
+        const tooltip = document.createElement('span');
+
+        previewFontDiv.classList.add('tooltip');
+        tooltip.classList.add('tooltiptext');
+
+        previewFontDiv.innerHTML = svg;
+        tooltip.innerText = family;
+        previewFontDiv.append(tooltip)
+
+        previewFontDiv.addEventListener('click', () => {
+            this.renderSvgDiv(family, {svg, dxf});
+        })
+        this.previewRenderDiv.append(previewFontDiv);
+    }
+    
+    private loadFontPreviewDivs = (additionalFontSize : number) => {
+        [...this.fontList.items].slice(this.previewFontLength, this.previewFontLength + additionalFontSize ).forEach((font, index) => {
+            this.render(
+                index,
+                this.selectVariant.selectedIndex,
+                this.textInput.value,
+                50,
+                this.unionCheckbox.checked,
+                this.filledCheckbox.checked,
+                this.kerningCheckbox.checked,
+                this.separateCheckbox.checked,
+                parseFloat(this.bezierAccuracy.value) || undefined,
+                this.selectUnits.value,
+                this.fillInput.value,
+                this.strokeInput.value,
+                this.strokeWidthInput.value,
+                this.strokeNonScalingCheckbox.checked,
+                this.fillRuleInput.value,
+                this.appendPreviewFontDivElement,
+            );
+        });
+        this.previewFontLength += additionalFontSize;
+    }
     private downloadSvg = () => {
         var SvgFile = window.btoa(this.outputTextarea.value);
         this.downloadButton.href = 'data:image/svg+xml;base64,' + SvgFile;
@@ -83,6 +129,25 @@ class App {
             this.copyToClipboardBtn.innerText = 'copy to clipboard';
         }, 2000)
     };
+
+    private renderSvgDiv =  (family: string, {svg, dxf}) =>{
+        this.renderDiv.innerHTML = svg;
+        this.renderDiv.setAttribute('data-dxf', dxf);
+        this.outputTextarea.value = svg;
+    };
+
+    private appendPreviewFont = () => {
+        this.loadFontPreviewDivs(30);
+        this.previewRenderDiv.hidden = false;
+    }
+
+    private clickHiddenPreviewButton = () => {
+        this.previewRenderDiv.hidden = this.previewRenderDiv.hidden ? false : true;
+        this.previewClearButton.innerHTML = this.previewRenderDiv.hidden ? "Show" : "Hidden";
+
+    }
+
+ 
     private updateUrl = () => {
         var urlSearchParams = new URLSearchParams(window.location.search);
 
@@ -174,7 +239,10 @@ class App {
         this.strokeWidthInput = this.$('#input-stroke-width') as HTMLInputElement;
         this.strokeNonScalingCheckbox = this.$('#input-stroke-non-scaling') as HTMLInputElement;
         this.fillRuleInput = this.$("#input-fill-rule") as HTMLSelectElement;
-
+        this.previewRenderDiv = this.$('#preview-render') as HTMLDivElement;
+        this.previewButton = this.$('#font-preview-btn') as HTMLButtonElement;
+        this.previewClearButton = this.$('#font-preview-clear-btn') as HTMLButtonElement;
+        this.previewFontLength = 0;
         // Init units select.
         Object.values(makerjs.unitType).forEach(unit => this.addOption(this.selectUnits, unit));
     }
@@ -277,6 +345,8 @@ class App {
     
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
         this.downloadButton.onclick = this.downloadSvg;
+        this.previewClearButton.onclick = this.clickHiddenPreviewButton;
+        this.previewButton.onclick = this.appendPreviewFont;
         this.dxfButton.onclick = this.downloadDxf;
         this.createLinkButton.onclick = this.updateUrl;
     }
@@ -309,29 +379,31 @@ class App {
     }
 
     callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean,
-         bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
-        //generate the text using a font
-        var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
+        bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
+       //generate the text using a font
+       var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
 
-        if (separate) {
-            for (var i in textModel.models) {
-                textModel.models[i].layer = i;
-            }
-        }
+       if (separate) {
+           for (var i in textModel.models) {
+               textModel.models[i].layer = i;
+           }
+       }
 
-        var svg = makerjs.exporter.toSVG(textModel, {
-                fill: filled ? fill : undefined,
-                stroke: stroke ? stroke : undefined, 
-                strokeWidth: strokeWidth ? strokeWidth : undefined,
-                fillRule: fillRule ? fillRule : undefined,
-                scalingStroke: !strokeNonScaling,
-            });
-        var dxf = makerjs.exporter.toDXF(textModel, {units: units, usePOLYLINE: true});
+       var svg = makerjs.exporter.toSVG(textModel, {
+               fill: filled ? fill : undefined,
+               stroke: stroke ? stroke : undefined, 
+               strokeWidth: strokeWidth ? strokeWidth : undefined,
+               fillRule: fillRule ? fillRule : undefined,
+               scalingStroke: !strokeNonScaling,
+           });
+       var dxf = makerjs.exporter.toDXF(textModel, {units: units, usePOLYLINE: true});
 
-        this.renderDiv.innerHTML = svg;
-        this.renderDiv.setAttribute('data-dxf', dxf);
-        this.outputTextarea.value = svg;
-    }
+       return {
+        svg,
+        dxf
+       };
+      
+   }
 
     render(
         fontIndex: number,
@@ -349,6 +421,7 @@ class App {
         strokeWidth: string,
         strokeNonScaling: boolean,
         fillRule: string,
+        callback: Function,
     ) {
         
         var f = this.fontList.items[fontIndex];
@@ -356,10 +429,10 @@ class App {
         var url = f.files[v].substring(5);  //remove http:
 
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+            callback(f.family, this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule));
         } else {
             opentype.load(url, (err, font) => {
-                this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                callback(f.family, this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule));
             });
         }
     }
