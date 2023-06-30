@@ -10,6 +10,7 @@ type FillRule = 'nonzero' | 'evenodd';
 class App {
 
     public fontList: google.fonts.WebfontList;
+    public errorDisplay: HTMLDivElement;
     private fileUpload: HTMLInputElement
     private fileUploadRemove: HTMLInputElement
     private customFont: opentype.Font;
@@ -37,6 +38,7 @@ class App {
     private fillRuleInput: HTMLSelectElement;
 
     private renderCurrent = () => {
+        this.errorDisplay.innerHTML = '';
         var size = this.sizeInput.valueAsNumber;
         if (!size) size = parseFloat(this.sizeInput.value);
         if (!size) size = 100;
@@ -55,7 +57,7 @@ class App {
             this.strokeInput.value,
             this.strokeWidthInput.value,
             this.strokeNonScalingCheckbox.checked,
-            this.fillRuleInput.value,
+            this.fillRuleInput.value as FillRule,
         );
     };
 
@@ -100,14 +102,14 @@ class App {
         urlSearchParams.set('input-stroke', this.strokeInput.value);
         urlSearchParams.set('input-strokeWidth', this.strokeWidthInput.value);
         urlSearchParams.set('input-fill-rule', this.fillRuleInput.value);
-        
-        const url = window.location.protocol 
-                    + "//" + window.location.host 
-                    + window.location.pathname 
-                    + "?" 
-                    + urlSearchParams.toString();
 
-        window.history.replaceState({path: url}, "", url)
+        const url = window.location.protocol
+            + "//" + window.location.host
+            + window.location.pathname
+            + "?"
+            + urlSearchParams.toString();
+
+        window.history.replaceState({ path: url }, "", url)
 
         this.copyString(window.location.href)
         this.createLinkButton.innerText = 'copied';
@@ -126,15 +128,15 @@ class App {
         const element = event.currentTarget as HTMLInputElement;
 
         if (element.files.length === 0) {
-          this.customFont = undefined;
+            this.customFont = undefined;
         } else {
-          var files = element.files[0];
+            var files = element.files[0];
 
-          var buffer = await files.arrayBuffer();
+            var buffer = await files.arrayBuffer();
 
-          var font = opentype.parse(buffer);
+            var font = opentype.parse(buffer);
 
-          this.customFont = font;
+            this.customFont = font;
         }
         this.renderCurrent();
     }
@@ -149,7 +151,7 @@ class App {
     }
 
     init() {
-
+        this.errorDisplay = this.$('#error-display') as HTMLDivElement;
         this.fileUpload = this.$('#font-upload') as HTMLInputElement;
         this.fileUploadRemove = this.$('#font-upload-remove') as HTMLInputElement;
         this.selectFamily = this.$('#font-select') as HTMLSelectElement;
@@ -201,7 +203,7 @@ class App {
 
         if (selectFamily !== "" && selectFamily !== null)
             this.selectFamily.value = selectFamily;
-        
+
         if (selectVariant !== "" && selectVariant !== null)
             this.selectVariant.value = selectVariant;
 
@@ -210,7 +212,7 @@ class App {
 
         if (unionCheckbox !== "" && unionCheckbox !== null)
             this.unionCheckbox.checked = unionCheckbox === "true" ? true : false;
-        
+
         if (filledCheckbox !== "" && filledCheckbox !== null)
             this.filledCheckbox.checked = filledCheckbox === "true" ? true : false;
 
@@ -219,13 +221,13 @@ class App {
 
         if (separateCheckbox !== "" && separateCheckbox !== null)
             this.separateCheckbox.checked = separateCheckbox === "true" ? true : false;
-        
+
         if (textInput !== "" && textInput !== null)
             this.textInput.value = textInput;
-        
+
         if (bezierAccuracy !== "" && bezierAccuracy !== null)
             this.bezierAccuracy.value = bezierAccuracy;
-        
+
         if (sizeInput !== "" && sizeInput !== null)
             this.sizeInput.value = sizeInput;
 
@@ -234,7 +236,7 @@ class App {
 
         if (strokeInput !== "" && strokeInput !== null)
             this.strokeInput.value = strokeInput;
-        
+
         if (strokeWidthInput !== "" && strokeWidthInput !== null)
             this.strokeWidthInput.value = strokeWidthInput;
 
@@ -243,7 +245,7 @@ class App {
 
         if (fillRuleInput !== "" && fillRuleInput !== null)
             this.fillRuleInput.value = fillRuleInput;
-        
+
     }
 
     handleEvents() {
@@ -274,7 +276,7 @@ class App {
 
         // Is triggered on the document whenever a new color is picked
         document.addEventListener("coloris:pick", debounce(this.renderCurrent))
-    
+
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
         this.downloadButton.onclick = this.downloadSvg;
         this.dxfButton.onclick = this.downloadDxf;
@@ -309,7 +311,7 @@ class App {
     }
 
     callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean,
-         bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
+        bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
         //generate the text using a font
         var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
 
@@ -320,13 +322,13 @@ class App {
         }
 
         var svg = makerjs.exporter.toSVG(textModel, {
-                fill: filled ? fill : undefined,
-                stroke: stroke ? stroke : undefined, 
-                strokeWidth: strokeWidth ? strokeWidth : undefined,
-                fillRule: fillRule ? fillRule : undefined,
-                scalingStroke: !strokeNonScaling,
-            });
-        var dxf = makerjs.exporter.toDXF(textModel, {units: units, usePOLYLINE: true});
+            fill: filled ? fill : undefined,
+            stroke: stroke ? stroke : undefined,
+            strokeWidth: strokeWidth ? strokeWidth : undefined,
+            fillRule: fillRule ? fillRule : undefined,
+            scalingStroke: !strokeNonScaling,
+        });
+        var dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
 
         this.renderDiv.innerHTML = svg;
         this.renderDiv.setAttribute('data-dxf', dxf);
@@ -348,18 +350,22 @@ class App {
         stroke: string,
         strokeWidth: string,
         strokeNonScaling: boolean,
-        fillRule: string,
+        fillRule: FillRule,
     ) {
-        
+
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
-        var url = f.files[v].substring(5);  //remove http:
+        var url = f.files[v].substring(5);    //.replace('http:', 'https:');
 
         if (this.customFont !== undefined) {
             this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
         } else {
             opentype.load(url, (err, font) => {
-                this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                if (err) {
+                    this.errorDisplay.innerHTML = err.toString();
+                } else {
+                    this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                }
             });
         }
     }
@@ -384,9 +390,9 @@ function debounce(callback, wait = 200) {
     let timeoutId = null;
 
     return (...args) => {
-      window.clearTimeout(timeoutId);
-      timeoutId = window.setTimeout(() => {
-        callback.apply(null, args);
-      }, wait);
+        window.clearTimeout(timeoutId);
+        timeoutId = window.setTimeout(() => {
+            callback.apply(null, args);
+        }, wait);
     };
-  }
+}
