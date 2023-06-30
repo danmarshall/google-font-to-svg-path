@@ -355,7 +355,7 @@ class App {
 
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
-        var url = f.files[v].substring(5);    //.replace('http:', 'https:');
+        var url = f.files[v].replace('http:', 'https:');
 
         if (this.customFont !== undefined) {
             this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
