@@ -1,15 +1,13 @@
 ///<reference path="node_modules/makerjs/index.d.ts" />
-////<reference path="node_modules/@jscad/stl-serializer/index.d.ts" />
 
-var makerjs = require('makerjs') as typeof MakerJs;
-// const stlSerializer = require('@jscad/stl-serializer');
-
+const makerjs = require('makerjs') as typeof MakerJs;
 
 type FillRule = 'nonzero' | 'evenodd';
 
 class App {
 
     public fontList: google.fonts.WebfontList;
+    public errorDisplay: HTMLDivElement;
     private fileUpload: HTMLInputElement
     private fileUploadRemove: HTMLInputElement
     private customFont: opentype.Font;
@@ -37,7 +35,8 @@ class App {
     private fillRuleInput: HTMLSelectElement;
 
     private renderCurrent = () => {
-        var size = this.sizeInput.valueAsNumber;
+        this.errorDisplay.innerHTML = '';
+        let size = this.sizeInput.valueAsNumber;
         if (!size) size = parseFloat(this.sizeInput.value);
         if (!size) size = 100;
         this.render(
@@ -55,23 +54,23 @@ class App {
             this.strokeInput.value,
             this.strokeWidthInput.value,
             this.strokeNonScalingCheckbox.checked,
-            this.fillRuleInput.value,
+            this.fillRuleInput.value as FillRule,
         );
     };
 
     private loadVariants = () => {
         this.selectVariant.options.length = 0;
-        var f = this.fontList.items[this.selectFamily.selectedIndex];
-        var v = f.variants.forEach(v => this.addOption(this.selectVariant, v));
+        const f = this.fontList.items[this.selectFamily.selectedIndex];
+        const v = f.variants.forEach(v => this.addOption(this.selectVariant, v));
         this.renderCurrent();
     };
     private downloadSvg = () => {
-        var SvgFile = window.btoa(this.outputTextarea.value);
+        const SvgFile = window.btoa(this.outputTextarea.value);
         this.downloadButton.href = 'data:image/svg+xml;base64,' + SvgFile;
         this.downloadButton.download = this.textInput.value;
     };
     private downloadDxf = () => {
-        var dxfFile = window.btoa(this.renderDiv.getAttribute('data-dxf'));
+        const dxfFile = window.btoa(this.renderDiv.getAttribute('data-dxf'));
         this.dxfButton.href = 'data:application/dxf;base64,' + dxfFile;
         this.dxfButton.download = this.textInput.value + '.dxf';
     }
@@ -84,7 +83,7 @@ class App {
         }, 2000)
     };
     private updateUrl = () => {
-        var urlSearchParams = new URLSearchParams(window.location.search);
+        const urlSearchParams = new URLSearchParams(window.location.search);
 
         urlSearchParams.set('font-select', this.selectFamily.value);
         urlSearchParams.set('font-variant', this.selectVariant.value);
@@ -100,14 +99,14 @@ class App {
         urlSearchParams.set('input-stroke', this.strokeInput.value);
         urlSearchParams.set('input-strokeWidth', this.strokeWidthInput.value);
         urlSearchParams.set('input-fill-rule', this.fillRuleInput.value);
-        
-        const url = window.location.protocol 
-                    + "//" + window.location.host 
-                    + window.location.pathname 
-                    + "?" 
-                    + urlSearchParams.toString();
 
-        window.history.replaceState({path: url}, "", url)
+        const url = window.location.protocol
+            + "//" + window.location.host
+            + window.location.pathname
+            + "?"
+            + urlSearchParams.toString();
+
+        window.history.replaceState({ path: url }, "", url)
 
         this.copyString(window.location.href)
         this.createLinkButton.innerText = 'copied';
@@ -126,15 +125,15 @@ class App {
         const element = event.currentTarget as HTMLInputElement;
 
         if (element.files.length === 0) {
-          this.customFont = undefined;
+            this.customFont = undefined;
         } else {
-          var files = element.files[0];
+            const files = element.files[0];
 
-          var buffer = await files.arrayBuffer();
+            const buffer = await files.arrayBuffer();
 
-          var font = opentype.parse(buffer);
+            const font = opentype.parse(buffer);
 
-          this.customFont = font;
+            this.customFont = font;
         }
         this.renderCurrent();
     }
@@ -149,7 +148,7 @@ class App {
     }
 
     init() {
-
+        this.errorDisplay = this.$('#error-display') as HTMLDivElement;
         this.fileUpload = this.$('#font-upload') as HTMLInputElement;
         this.fileUploadRemove = this.$('#font-upload-remove') as HTMLInputElement;
         this.selectFamily = this.$('#font-select') as HTMLSelectElement;
@@ -180,28 +179,28 @@ class App {
     }
 
     readQueryParams() {
-        var urlSearchParams = new URLSearchParams(window.location.search);
+        const urlSearchParams = new URLSearchParams(window.location.search);
 
-        var selectFamily = urlSearchParams.get('font-select');
-        var selectVariant = urlSearchParams.get('font-variant');
-        var unionCheckbox = urlSearchParams.get('input-union');
-        var filledCheckbox = urlSearchParams.get('input-filled');
-        var kerningCheckbox = urlSearchParams.get('input-kerning');
-        var separateCheckbox = urlSearchParams.get('input-separate');
-        var textInput = urlSearchParams.get('input-text');
-        var bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
-        var selectUnits = urlSearchParams.get('dxf-units');
-        var sizeInput = urlSearchParams.get('input-size');
-        var fillInput = urlSearchParams.get('input-fill');
-        var strokeInput = urlSearchParams.get('input-stroke');
-        var strokeWidthInput = urlSearchParams.get('input-stroke-width');
-        var strokeNonScalingCheckbox = urlSearchParams.get('input-stroke-non-scaling');
-        var fillRuleInput = urlSearchParams.get('input-fill-rule');
+        const selectFamily = urlSearchParams.get('font-select');
+        const selectVariant = urlSearchParams.get('font-variant');
+        const unionCheckbox = urlSearchParams.get('input-union');
+        const filledCheckbox = urlSearchParams.get('input-filled');
+        const kerningCheckbox = urlSearchParams.get('input-kerning');
+        const separateCheckbox = urlSearchParams.get('input-separate');
+        const textInput = urlSearchParams.get('input-text');
+        const bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
+        const selectUnits = urlSearchParams.get('dxf-units');
+        const sizeInput = urlSearchParams.get('input-size');
+        const fillInput = urlSearchParams.get('input-fill');
+        const strokeInput = urlSearchParams.get('input-stroke');
+        const strokeWidthInput = urlSearchParams.get('input-stroke-width');
+        const strokeNonScalingCheckbox = urlSearchParams.get('input-stroke-non-scaling');
+        const fillRuleInput = urlSearchParams.get('input-fill-rule');
 
 
         if (selectFamily !== "" && selectFamily !== null)
             this.selectFamily.value = selectFamily;
-        
+
         if (selectVariant !== "" && selectVariant !== null)
             this.selectVariant.value = selectVariant;
 
@@ -210,7 +209,7 @@ class App {
 
         if (unionCheckbox !== "" && unionCheckbox !== null)
             this.unionCheckbox.checked = unionCheckbox === "true" ? true : false;
-        
+
         if (filledCheckbox !== "" && filledCheckbox !== null)
             this.filledCheckbox.checked = filledCheckbox === "true" ? true : false;
 
@@ -219,13 +218,13 @@ class App {
 
         if (separateCheckbox !== "" && separateCheckbox !== null)
             this.separateCheckbox.checked = separateCheckbox === "true" ? true : false;
-        
+
         if (textInput !== "" && textInput !== null)
             this.textInput.value = textInput;
-        
+
         if (bezierAccuracy !== "" && bezierAccuracy !== null)
             this.bezierAccuracy.value = bezierAccuracy;
-        
+
         if (sizeInput !== "" && sizeInput !== null)
             this.sizeInput.value = sizeInput;
 
@@ -234,7 +233,7 @@ class App {
 
         if (strokeInput !== "" && strokeInput !== null)
             this.strokeInput.value = strokeInput;
-        
+
         if (strokeWidthInput !== "" && strokeWidthInput !== null)
             this.strokeWidthInput.value = strokeWidthInput;
 
@@ -243,7 +242,7 @@ class App {
 
         if (fillRuleInput !== "" && fillRuleInput !== null)
             this.fillRuleInput.value = fillRuleInput;
-        
+
     }
 
     handleEvents() {
@@ -274,7 +273,7 @@ class App {
 
         // Is triggered on the document whenever a new color is picked
         document.addEventListener("coloris:pick", debounce(this.renderCurrent))
-    
+
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
         this.downloadButton.onclick = this.downloadSvg;
         this.dxfButton.onclick = this.downloadDxf;
@@ -286,14 +285,14 @@ class App {
     }
 
     addOption(select: HTMLSelectElement, optionText: string) {
-        var option = document.createElement('option');
+        const option = document.createElement('option');
         option.text = optionText;
         option.value = optionText;
         select.options.add(option);
     }
 
     getGoogleFonts(apiKey: string) {
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         xhr.open('get', 'https://www.googleapis.com/webfonts/v1/webfonts?key=' + apiKey, true);
         xhr.onloadend = () => {
             this.fontList = JSON.parse(xhr.responseText);
@@ -309,24 +308,24 @@ class App {
     }
 
     callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean,
-         bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
+        bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
         //generate the text using a font
-        var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
+        const textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
 
         if (separate) {
-            for (var i in textModel.models) {
+            for (const i in textModel.models) {
                 textModel.models[i].layer = i;
             }
         }
 
-        var svg = makerjs.exporter.toSVG(textModel, {
-                fill: filled ? fill : undefined,
-                stroke: stroke ? stroke : undefined, 
-                strokeWidth: strokeWidth ? strokeWidth : undefined,
-                fillRule: fillRule ? fillRule : undefined,
-                scalingStroke: !strokeNonScaling,
-            });
-        var dxf = makerjs.exporter.toDXF(textModel, {units: units, usePOLYLINE: true});
+        const svg = makerjs.exporter.toSVG(textModel, {
+            fill: filled ? fill : undefined,
+            stroke: stroke ? stroke : undefined,
+            strokeWidth: strokeWidth ? strokeWidth : undefined,
+            fillRule: fillRule ? fillRule : undefined,
+            scalingStroke: !strokeNonScaling,
+        });
+        const dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
 
         this.renderDiv.innerHTML = svg;
         this.renderDiv.setAttribute('data-dxf', dxf);
@@ -348,24 +347,28 @@ class App {
         stroke: string,
         strokeWidth: string,
         strokeNonScaling: boolean,
-        fillRule: string,
+        fillRule: FillRule,
     ) {
-        
-        var f = this.fontList.items[fontIndex];
-        var v = f.variants[variantIndex];
-        var url = f.files[v].substring(5);  //remove http:
+
+        const f = this.fontList.items[fontIndex];
+        const v = f.variants[variantIndex];
+        const url = f.files[v].replace('http:', 'https:');
 
         if (this.customFont !== undefined) {
             this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
         } else {
             opentype.load(url, (err, font) => {
-                this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                if (err) {
+                    this.errorDisplay.innerHTML = err.toString();
+                } else {
+                    this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                }
             });
         }
     }
 }
 
-var app = new App();
+const app = new App();
 
 window.onload = () => {
     app.init();
@@ -384,9 +387,9 @@ function debounce(callback, wait = 200) {
     let timeoutId = null;
 
     return (...args) => {
-      window.clearTimeout(timeoutId);
-      timeoutId = window.setTimeout(() => {
-        callback.apply(null, args);
-      }, wait);
+        window.clearTimeout(timeoutId);
+        timeoutId = window.setTimeout(() => {
+            callback.apply(null, args);
+        }, wait);
     };
-  }
+}

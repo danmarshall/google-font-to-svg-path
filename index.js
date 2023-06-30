@@ -1,10 +1,10 @@
 ///<reference path="node_modules/makerjs/index.d.ts" />
-////<reference path="node_modules/@jscad/stl-serializer/index.d.ts" />
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -14,9 +14,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -40,6 +40,7 @@ var App = /** @class */ (function () {
     function App() {
         var _this = this;
         this.renderCurrent = function () {
+            _this.errorDisplay.innerHTML = '';
             var size = _this.sizeInput.valueAsNumber;
             if (!size)
                 size = parseFloat(_this.sizeInput.value);
@@ -137,6 +138,7 @@ var App = /** @class */ (function () {
     }
     App.prototype.init = function () {
         var _this = this;
+        this.errorDisplay = this.$('#error-display');
         this.fileUpload = this.$('#font-upload');
         this.fileUploadRemove = this.$('#font-upload-remove');
         this.selectFamily = this.$('#font-select');
@@ -279,7 +281,7 @@ var App = /** @class */ (function () {
             stroke: stroke ? stroke : undefined,
             strokeWidth: strokeWidth ? strokeWidth : undefined,
             fillRule: fillRule ? fillRule : undefined,
-            scalingStroke: !strokeNonScaling
+            scalingStroke: !strokeNonScaling,
         });
         var dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
         this.renderDiv.innerHTML = svg;
@@ -290,13 +292,18 @@ var App = /** @class */ (function () {
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
-        var url = f.files[v].substring(5); //remove http:
+        var url = f.files[v].replace('http:', 'https:');
         if (this.customFont !== undefined) {
             this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
         }
         else {
             opentype.load(url, function (err, font) {
-                _this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                if (err) {
+                    _this.errorDisplay.innerHTML = err.toString();
+                }
+                else {
+                    _this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                }
             });
         }
     };

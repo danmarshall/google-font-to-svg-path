@@ -113,3 +113,8 @@ textarea:focus{
 .input:focus{
     border: 2px solid #FF7F50;
 }
+#error-display {
+    color: #FF7F50;
+    font-weight: bold;
+    margin-bottom: 1em;
+}
