@@ -308,8 +308,8 @@ class App {
     }
 
     callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean,
-        bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
-        //generate the text using a font
+                bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
+        // Generate the text using a font
         const textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
 
         if (separate) {
@@ -318,13 +318,27 @@ class App {
             }
         }
 
-        const svg = makerjs.exporter.toSVG(textModel, {
+        // Calculate the bounding box of the text model
+        const bbox = makerjs.measure.modelExtents(textModel);
+        const padding = 3; // Add some padding around the text
+        const viewBox = [
+            bbox.low[0] - padding,
+            bbox.low[1] - padding,
+            bbox.high[0] - bbox.low[0] + 2 * padding,
+            bbox.high[1] - bbox.low[1] + 2 * padding
+        ].join(' ');
+
+        let svg = makerjs.exporter.toSVG(textModel, {
             fill: filled ? fill : undefined,
             stroke: stroke ? stroke : undefined,
             strokeWidth: strokeWidth ? strokeWidth : undefined,
             fillRule: fillRule ? fillRule : undefined,
             scalingStroke: !strokeNonScaling,
         });
+
+        // Add the viewBox attribute to the SVG string, removing any existing viewBox attribute
+        svg = svg.replace(/viewBox="[^"]*"/, `viewBox="${viewBox}"`);
+
         const dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
 
         this.renderDiv.innerHTML = svg;
@@ -378,10 +392,10 @@ window.onload = () => {
 /**
  * Creates and returns a new debounced version of the passed function that will
  * postpone its execution until after wait milliseconds have elapsed since the last time it was invoked.
- * 
- * @param callback 
- * @param wait 
- * @returns 
+ *
+ * @param callback
+ * @param wait
+ * @returns
  */
 function debounce(callback, wait = 200) {
     let timeoutId = null;
