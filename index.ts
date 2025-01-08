@@ -1,4 +1,4 @@
-///<reference path="node_modules/makerjs/index.d.ts" />
+/// <reference path="node_modules/makerjs/index.d.ts" />
 
 const makerjs = require('makerjs') as typeof MakerJs;
 
@@ -33,12 +33,16 @@ class App {
     private strokeWidthInput: HTMLInputElement;
     private strokeNonScalingCheckbox: HTMLInputElement;
     private fillRuleInput: HTMLSelectElement;
+    private addPaddingInput: HTMLInputElement;
 
     private renderCurrent = () => {
         this.errorDisplay.innerHTML = '';
         let size = this.sizeInput.valueAsNumber;
         if (!size) size = parseFloat(this.sizeInput.value);
         if (!size) size = 100;
+        let addPadding = this.addPaddingInput.valueAsNumber;
+        if (!addPadding) addPadding = parseInt(this.addPaddingInput.value);
+        if (!addPadding) addPadding = 0;
         this.render(
             this.selectFamily.selectedIndex,
             this.selectVariant.selectedIndex,
@@ -55,6 +59,7 @@ class App {
             this.strokeWidthInput.value,
             this.strokeNonScalingCheckbox.checked,
             this.fillRuleInput.value as FillRule,
+            addPadding
         );
     };
 
@@ -99,6 +104,7 @@ class App {
         urlSearchParams.set('input-stroke', this.strokeInput.value);
         urlSearchParams.set('input-strokeWidth', this.strokeWidthInput.value);
         urlSearchParams.set('input-fill-rule', this.fillRuleInput.value);
+        urlSearchParams.set('input-add-padding', this.addPaddingInput.value);
 
         const url = window.location.protocol
             + "//" + window.location.host
@@ -106,7 +112,7 @@ class App {
             + "?"
             + urlSearchParams.toString();
 
-        window.history.replaceState({ path: url }, "", url)
+        window.history.replaceState({path: url}, "", url)
 
         this.copyString(window.location.href)
         this.createLinkButton.innerText = 'copied';
@@ -173,6 +179,7 @@ class App {
         this.strokeWidthInput = this.$('#input-stroke-width') as HTMLInputElement;
         this.strokeNonScalingCheckbox = this.$('#input-stroke-non-scaling') as HTMLInputElement;
         this.fillRuleInput = this.$("#input-fill-rule") as HTMLSelectElement;
+        this.addPaddingInput = this.$("#input-add-padding") as HTMLInputElement;
 
         // Init units select.
         Object.values(makerjs.unitType).forEach(unit => this.addOption(this.selectUnits, unit));
@@ -196,6 +203,7 @@ class App {
         const strokeWidthInput = urlSearchParams.get('input-stroke-width');
         const strokeNonScalingCheckbox = urlSearchParams.get('input-stroke-non-scaling');
         const fillRuleInput = urlSearchParams.get('input-fill-rule');
+        const addPaddingInput = urlSearchParams.get('input-add-padding');
 
 
         if (selectFamily !== "" && selectFamily !== null)
@@ -243,6 +251,9 @@ class App {
         if (fillRuleInput !== "" && fillRuleInput !== null)
             this.fillRuleInput.value = fillRuleInput;
 
+        if (addPaddingInput !== "" && addPaddingInput !== null)
+            this.addPaddingInput.value = addPaddingInput;
+
     }
 
     handleEvents() {
@@ -268,6 +279,8 @@ class App {
             this.strokeWidthInput.onkeyup =
             this.strokeNonScalingCheckbox.onchange =
             this.fillRuleInput.onchange =
+            this.addPaddingInput.onchange =
+            this.addPaddingInput.onkeyup =
             this.renderCurrent
             ;
 
@@ -308,9 +321,9 @@ class App {
     }
 
     callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean,
-        bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
-        //generate the text using a font
-        const textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
+                bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule, addPadding: number) {
+        // Generate the text using a font
+        const textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, {kerning});
 
         if (separate) {
             for (const i in textModel.models) {
@@ -318,14 +331,27 @@ class App {
             }
         }
 
-        const svg = makerjs.exporter.toSVG(textModel, {
+        let svg = makerjs.exporter.toSVG(textModel, {
             fill: filled ? fill : undefined,
             stroke: stroke ? stroke : undefined,
             strokeWidth: strokeWidth ? strokeWidth : undefined,
             fillRule: fillRule ? fillRule : undefined,
             scalingStroke: !strokeNonScaling,
         });
-        const dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
+
+        // Calculate the bounding box of the text model
+        const bbox = makerjs.measure.modelExtents(textModel);
+        const padding = addPadding
+        const viewBox = [
+            bbox.low[0] - padding,
+            bbox.low[1] - padding,
+            bbox.high[0] - bbox.low[0] + 2 * padding,
+            bbox.high[1] - bbox.low[1] + 2 * padding
+        ].join(' ');
+        // Add the viewBox attribute to the SVG string, removing any existing viewBox attribute
+        svg = svg.replace(/viewBox="[^"]*"/, `viewBox="${viewBox}"`);
+
+        const dxf = makerjs.exporter.toDXF(textModel, {units: units, usePOLYLINE: true});
 
         this.renderDiv.innerHTML = svg;
         this.renderDiv.setAttribute('data-dxf', dxf);
@@ -348,6 +374,7 @@ class App {
         strokeWidth: string,
         strokeNonScaling: boolean,
         fillRule: FillRule,
+        addPadding: number
     ) {
 
         const f = this.fontList.items[fontIndex];
@@ -355,13 +382,13 @@ class App {
         const url = f.files[v].replace('http:', 'https:');
 
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule, addPadding);
         } else {
             opentype.load(url, (err, font) => {
                 if (err) {
                     this.errorDisplay.innerHTML = err.toString();
                 } else {
-                    this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                    this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule, addPadding);
                 }
             });
         }
@@ -378,10 +405,10 @@ window.onload = () => {
 /**
  * Creates and returns a new debounced version of the passed function that will
  * postpone its execution until after wait milliseconds have elapsed since the last time it was invoked.
- * 
- * @param callback 
- * @param wait 
- * @returns 
+ *
+ * @param callback
+ * @param wait
+ * @returns
  */
 function debounce(callback, wait = 200) {
     let timeoutId = null;

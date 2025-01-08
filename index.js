@@ -1,4 +1,4 @@
-///<reference path="node_modules/makerjs/index.d.ts" />
+/// <reference path="node_modules/makerjs/index.d.ts" />
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -46,7 +46,12 @@ var App = /** @class */ (function () {
                 size = parseFloat(_this.sizeInput.value);
             if (!size)
                 size = 100;
-            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value, _this.strokeWidthInput.value, _this.strokeNonScalingCheckbox.checked, _this.fillRuleInput.value);
+            var addPadding = _this.addPaddingInput.valueAsNumber;
+            if (!addPadding)
+                addPadding = parseInt(_this.addPaddingInput.value);
+            if (!addPadding)
+                addPadding = 0;
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value, _this.strokeWidthInput.value, _this.strokeNonScalingCheckbox.checked, _this.fillRuleInput.value, addPadding);
         };
         this.loadVariants = function () {
             _this.selectVariant.options.length = 0;
@@ -88,6 +93,7 @@ var App = /** @class */ (function () {
             urlSearchParams.set('input-stroke', _this.strokeInput.value);
             urlSearchParams.set('input-strokeWidth', _this.strokeWidthInput.value);
             urlSearchParams.set('input-fill-rule', _this.fillRuleInput.value);
+            urlSearchParams.set('input-add-padding', _this.addPaddingInput.value);
             var url = window.location.protocol
                 + "//" + window.location.host
                 + window.location.pathname
@@ -163,6 +169,7 @@ var App = /** @class */ (function () {
         this.strokeWidthInput = this.$('#input-stroke-width');
         this.strokeNonScalingCheckbox = this.$('#input-stroke-non-scaling');
         this.fillRuleInput = this.$("#input-fill-rule");
+        this.addPaddingInput = this.$("#input-add-padding");
         // Init units select.
         Object.values(makerjs.unitType).forEach(function (unit) { return _this.addOption(_this.selectUnits, unit); });
     };
@@ -183,6 +190,7 @@ var App = /** @class */ (function () {
         var strokeWidthInput = urlSearchParams.get('input-stroke-width');
         var strokeNonScalingCheckbox = urlSearchParams.get('input-stroke-non-scaling');
         var fillRuleInput = urlSearchParams.get('input-fill-rule');
+        var addPaddingInput = urlSearchParams.get('input-add-padding');
         if (selectFamily !== "" && selectFamily !== null)
             this.selectFamily.value = selectFamily;
         if (selectVariant !== "" && selectVariant !== null)
@@ -213,6 +221,8 @@ var App = /** @class */ (function () {
             this.strokeNonScalingCheckbox.checked = strokeNonScalingCheckbox === "true" ? true : false;
         if (fillRuleInput !== "" && fillRuleInput !== null)
             this.fillRuleInput.value = fillRuleInput;
+        if (addPaddingInput !== "" && addPaddingInput !== null)
+            this.addPaddingInput.value = addPaddingInput;
     };
     App.prototype.handleEvents = function () {
         this.fileUpload.onchange = this.readUploadedFile;
@@ -237,7 +247,9 @@ var App = /** @class */ (function () {
                                                                         this.strokeWidthInput.onkeyup =
                                                                             this.strokeNonScalingCheckbox.onchange =
                                                                                 this.fillRuleInput.onchange =
-                                                                                    this.renderCurrent;
+                                                                                    this.addPaddingInput.onchange =
+                                                                                        this.addPaddingInput.onkeyup =
+                                                                                            this.renderCurrent;
         // Is triggered on the document whenever a new color is picked
         document.addEventListener("coloris:pick", debounce(this.renderCurrent));
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
@@ -268,8 +280,8 @@ var App = /** @class */ (function () {
         };
         xhr.send();
     };
-    App.prototype.callMakerjs = function (font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule) {
-        //generate the text using a font
+    App.prototype.callMakerjs = function (font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule, addPadding) {
+        // Generate the text using a font
         var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning: kerning });
         if (separate) {
             for (var i in textModel.models) {
@@ -283,18 +295,29 @@ var App = /** @class */ (function () {
             fillRule: fillRule ? fillRule : undefined,
             scalingStroke: !strokeNonScaling,
         });
+        // Calculate the bounding box of the text model
+        var bbox = makerjs.measure.modelExtents(textModel);
+        var padding = addPadding;
+        var viewBox = [
+            bbox.low[0] - padding,
+            bbox.low[1] - padding,
+            bbox.high[0] - bbox.low[0] + 2 * padding,
+            bbox.high[1] - bbox.low[1] + 2 * padding
+        ].join(' ');
+        // Add the viewBox attribute to the SVG string, removing any existing viewBox attribute
+        svg = svg.replace(/viewBox="[^"]*"/, "viewBox=\"".concat(viewBox, "\""));
         var dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
         this.renderDiv.innerHTML = svg;
         this.renderDiv.setAttribute('data-dxf', dxf);
         this.outputTextarea.value = svg;
     };
-    App.prototype.render = function (fontIndex, variantIndex, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule) {
+    App.prototype.render = function (fontIndex, variantIndex, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule, addPadding) {
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
         var url = f.files[v].replace('http:', 'https:');
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule, addPadding);
         }
         else {
             opentype.load(url, function (err, font) {
@@ -302,7 +325,7 @@ var App = /** @class */ (function () {
                     _this.errorDisplay.innerHTML = err.toString();
                 }
                 else {
-                    _this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                    _this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule, addPadding);
                 }
             });
         }
