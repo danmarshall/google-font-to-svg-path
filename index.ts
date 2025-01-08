@@ -40,6 +40,9 @@ class App {
         let size = this.sizeInput.valueAsNumber;
         if (!size) size = parseFloat(this.sizeInput.value);
         if (!size) size = 100;
+        let addPadding = this.addPaddingInput.valueAsNumber;
+        if (!addPadding) addPadding = parseInt(this.addPaddingInput.value);
+        if (!addPadding) addPadding = 0;
         this.render(
             this.selectFamily.selectedIndex,
             this.selectVariant.selectedIndex,
@@ -56,7 +59,7 @@ class App {
             this.strokeWidthInput.value,
             this.strokeNonScalingCheckbox.checked,
             this.fillRuleInput.value as FillRule,
-            this.addPaddingInput.checked
+            addPadding
         );
     };
 
@@ -101,7 +104,7 @@ class App {
         urlSearchParams.set('input-stroke', this.strokeInput.value);
         urlSearchParams.set('input-strokeWidth', this.strokeWidthInput.value);
         urlSearchParams.set('input-fill-rule', this.fillRuleInput.value);
-        urlSearchParams.set('input-add-padding', String(this.addPaddingInput.checked));
+        urlSearchParams.set('input-add-padding', this.addPaddingInput.value);
 
         const url = window.location.protocol
             + "//" + window.location.host
@@ -249,7 +252,7 @@ class App {
             this.fillRuleInput.value = fillRuleInput;
 
         if (addPaddingInput !== "" && addPaddingInput !== null)
-            this.addPaddingInput.checked = addPaddingInput === "true"
+            this.addPaddingInput.value = addPaddingInput;
 
     }
 
@@ -277,6 +280,7 @@ class App {
             this.strokeNonScalingCheckbox.onchange =
             this.fillRuleInput.onchange =
             this.addPaddingInput.onchange =
+            this.addPaddingInput.onkeyup =
             this.renderCurrent
             ;
 
@@ -317,7 +321,7 @@ class App {
     }
 
     callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean,
-                bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule, addPadding: boolean) {
+                bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule, addPadding: number) {
         // Generate the text using a font
         const textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, {kerning});
 
@@ -335,19 +339,17 @@ class App {
             scalingStroke: !strokeNonScaling,
         });
 
-        if (addPadding) {
-            // Calculate the bounding box of the text model
-            const bbox = makerjs.measure.modelExtents(textModel);
-            const padding = 3; // Add some padding around the text
-            const viewBox = [
-                bbox.low[0] - padding,
-                bbox.low[1] - padding,
-                bbox.high[0] - bbox.low[0] + 2 * padding,
-                bbox.high[1] - bbox.low[1] + 2 * padding
-            ].join(' ');
-            // Add the viewBox attribute to the SVG string, removing any existing viewBox attribute
-            svg = svg.replace(/viewBox="[^"]*"/, `viewBox="${viewBox}"`);
-        }
+        // Calculate the bounding box of the text model
+        const bbox = makerjs.measure.modelExtents(textModel);
+        const padding = addPadding
+        const viewBox = [
+            bbox.low[0] - padding,
+            bbox.low[1] - padding,
+            bbox.high[0] - bbox.low[0] + 2 * padding,
+            bbox.high[1] - bbox.low[1] + 2 * padding
+        ].join(' ');
+        // Add the viewBox attribute to the SVG string, removing any existing viewBox attribute
+        svg = svg.replace(/viewBox="[^"]*"/, `viewBox="${viewBox}"`);
 
         const dxf = makerjs.exporter.toDXF(textModel, {units: units, usePOLYLINE: true});
 
@@ -372,7 +374,7 @@ class App {
         strokeWidth: string,
         strokeNonScaling: boolean,
         fillRule: FillRule,
-        addPadding: boolean
+        addPadding: number
     ) {
 
         const f = this.fontList.items[fontIndex];

@@ -46,7 +46,12 @@ var App = /** @class */ (function () {
                 size = parseFloat(_this.sizeInput.value);
             if (!size)
                 size = 100;
-            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value, _this.strokeWidthInput.value, _this.strokeNonScalingCheckbox.checked, _this.fillRuleInput.value, _this.addPaddingInput.checked);
+            var addPadding = _this.addPaddingInput.valueAsNumber;
+            if (!addPadding)
+                addPadding = parseInt(_this.addPaddingInput.value);
+            if (!addPadding)
+                addPadding = 0;
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value, _this.strokeWidthInput.value, _this.strokeNonScalingCheckbox.checked, _this.fillRuleInput.value, addPadding);
         };
         this.loadVariants = function () {
             _this.selectVariant.options.length = 0;
@@ -88,7 +93,7 @@ var App = /** @class */ (function () {
             urlSearchParams.set('input-stroke', _this.strokeInput.value);
             urlSearchParams.set('input-strokeWidth', _this.strokeWidthInput.value);
             urlSearchParams.set('input-fill-rule', _this.fillRuleInput.value);
-            urlSearchParams.set('input-add-padding', String(_this.addPaddingInput.checked));
+            urlSearchParams.set('input-add-padding', _this.addPaddingInput.value);
             var url = window.location.protocol
                 + "//" + window.location.host
                 + window.location.pathname
@@ -217,7 +222,7 @@ var App = /** @class */ (function () {
         if (fillRuleInput !== "" && fillRuleInput !== null)
             this.fillRuleInput.value = fillRuleInput;
         if (addPaddingInput !== "" && addPaddingInput !== null)
-            this.addPaddingInput.checked = addPaddingInput === "true";
+            this.addPaddingInput.value = addPaddingInput;
     };
     App.prototype.handleEvents = function () {
         this.fileUpload.onchange = this.readUploadedFile;
@@ -243,7 +248,8 @@ var App = /** @class */ (function () {
                                                                             this.strokeNonScalingCheckbox.onchange =
                                                                                 this.fillRuleInput.onchange =
                                                                                     this.addPaddingInput.onchange =
-                                                                                        this.renderCurrent;
+                                                                                        this.addPaddingInput.onkeyup =
+                                                                                            this.renderCurrent;
         // Is triggered on the document whenever a new color is picked
         document.addEventListener("coloris:pick", debounce(this.renderCurrent));
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
@@ -289,19 +295,17 @@ var App = /** @class */ (function () {
             fillRule: fillRule ? fillRule : undefined,
             scalingStroke: !strokeNonScaling,
         });
-        if (addPadding) {
-            // Calculate the bounding box of the text model
-            var bbox = makerjs.measure.modelExtents(textModel);
-            var padding = 3; // Add some padding around the text
-            var viewBox = [
-                bbox.low[0] - padding,
-                bbox.low[1] - padding,
-                bbox.high[0] - bbox.low[0] + 2 * padding,
-                bbox.high[1] - bbox.low[1] + 2 * padding
-            ].join(' ');
-            // Add the viewBox attribute to the SVG string, removing any existing viewBox attribute
-            svg = svg.replace(/viewBox="[^"]*"/, "viewBox=\"".concat(viewBox, "\""));
-        }
+        // Calculate the bounding box of the text model
+        var bbox = makerjs.measure.modelExtents(textModel);
+        var padding = addPadding;
+        var viewBox = [
+            bbox.low[0] - padding,
+            bbox.low[1] - padding,
+            bbox.high[0] - bbox.low[0] + 2 * padding,
+            bbox.high[1] - bbox.low[1] + 2 * padding
+        ].join(' ');
+        // Add the viewBox attribute to the SVG string, removing any existing viewBox attribute
+        svg = svg.replace(/viewBox="[^"]*"/, "viewBox=\"".concat(viewBox, "\""));
         var dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
         this.renderDiv.innerHTML = svg;
         this.renderDiv.setAttribute('data-dxf', dxf);
