@@ -84,6 +84,7 @@ textarea:focus{
     border: 2px solid transparent;
     outline: none;
     transition: 0.3s ease-out;
+    text-decoration: none;
 }
 .btn:hover,.btn:focus{
     background-color: #0000;  /* dark coral color*/
