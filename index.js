@@ -39,23 +39,25 @@ var makerjs = require('makerjs');
 var App = /** @class */ (function () {
     function App() {
         var _this = this;
+        this.updateDarkModeButton = function (theme) {
+            if (_this.darkModeToggle) {
+                _this.darkModeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+                _this.darkModeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+            }
+        };
         this.toggleDarkMode = function () {
             var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
             var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
-            if (_this.darkModeToggle) {
-                _this.darkModeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-            }
+            _this.updateDarkModeButton(newTheme);
         };
         this.initDarkMode = function () {
             var savedTheme = localStorage.getItem('theme');
             var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             var theme = savedTheme || (prefersDark ? 'dark' : 'light');
             document.documentElement.setAttribute('data-theme', theme);
-            if (_this.darkModeToggle) {
-                _this.darkModeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
-            }
+            _this.updateDarkModeButton(theme);
         };
         this.renderCurrent = function () {
             _this.errorDisplay.innerHTML = '';
