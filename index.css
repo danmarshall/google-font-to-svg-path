@@ -64,7 +64,7 @@ hr {
     text-decoration: none;
     border-radius: 0.25rem;
     position: absolute;
-    right: 180px;
+    right: calc(20px + 160px);
     top: 20px;
     cursor: pointer;
     border: none;

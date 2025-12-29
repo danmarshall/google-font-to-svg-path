@@ -35,7 +35,7 @@ class App {
     private fillRuleInput: HTMLSelectElement;
     private darkModeToggle: HTMLButtonElement;
 
-    private updateDarkModeButton = (theme: 'light' | 'dark') => {
+    private updateDarkModeButton = (theme: string) => {
         if (this.darkModeToggle) {
             this.darkModeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
             this.darkModeToggle.setAttribute('aria-label', 
@@ -50,7 +50,7 @@ class App {
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         
-        this.updateDarkModeButton(newTheme as 'light' | 'dark');
+        this.updateDarkModeButton(newTheme);
     };
 
     private initDarkMode = () => {
@@ -59,7 +59,7 @@ class App {
         const theme = savedTheme || (prefersDark ? 'dark' : 'light');
         
         document.documentElement.setAttribute('data-theme', theme);
-        this.updateDarkModeButton(theme as 'light' | 'dark');
+        this.updateDarkModeButton(theme);
     };
 
     private renderCurrent = () => {
