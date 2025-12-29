@@ -40,7 +40,7 @@ var App = /** @class */ (function () {
     function App() {
         var _this = this;
         this.toggleDarkMode = function () {
-            var currentTheme = document.documentElement.getAttribute('data-theme');
+            var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
             var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
