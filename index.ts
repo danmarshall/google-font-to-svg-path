@@ -17,10 +17,11 @@ class App {
     private filledCheckbox: HTMLInputElement;
     private kerningCheckbox: HTMLInputElement;
     private separateCheckbox: HTMLInputElement;
-    private textInput: HTMLInputElement;
+    private textInput: HTMLTextAreaElement;
     private bezierAccuracy: HTMLInputElement;
     private selectUnits: HTMLSelectElement;
     private sizeInput: HTMLInputElement;
+    private lineHeightInput: HTMLInputElement;
     private renderDiv: HTMLDivElement;
     private outputTextarea: HTMLTextAreaElement;
     private copyToClipboardBtn: HTMLButtonElement;
@@ -39,11 +40,15 @@ class App {
         let size = this.sizeInput.valueAsNumber;
         if (!size) size = parseFloat(this.sizeInput.value);
         if (!size) size = 100;
+        let lineHeight = this.lineHeightInput.valueAsNumber;
+        if (!lineHeight) lineHeight = parseFloat(this.lineHeightInput.value);
+        if (!lineHeight) lineHeight = 1.2;
         this.render(
             this.selectFamily.selectedIndex,
             this.selectVariant.selectedIndex,
             this.textInput.value,
             size,
+            lineHeight,
             this.unionCheckbox.checked,
             this.filledCheckbox.checked,
             this.kerningCheckbox.checked,
@@ -95,6 +100,7 @@ class App {
         urlSearchParams.set('input-bezier-accuracy', this.bezierAccuracy.value);
         urlSearchParams.set('dxf-units', this.selectUnits.value);
         urlSearchParams.set('input-size', this.sizeInput.value);
+        urlSearchParams.set('input-line-height', this.lineHeightInput.value);
         urlSearchParams.set('input-fill', this.fillInput.value);
         urlSearchParams.set('input-stroke', this.strokeInput.value);
         urlSearchParams.set('input-strokeWidth', this.strokeWidthInput.value);
@@ -157,10 +163,11 @@ class App {
         this.filledCheckbox = this.$('#input-filled') as HTMLInputElement;
         this.kerningCheckbox = this.$('#input-kerning') as HTMLInputElement;
         this.separateCheckbox = this.$('#input-separate') as HTMLInputElement;
-        this.textInput = this.$('#input-text') as HTMLInputElement;
+        this.textInput = this.$('#input-text') as HTMLTextAreaElement;
         this.bezierAccuracy = this.$('#input-bezier-accuracy') as HTMLInputElement;
         this.selectUnits = this.$('#dxf-units') as HTMLSelectElement;
         this.sizeInput = this.$('#input-size') as HTMLInputElement;
+        this.lineHeightInput = this.$('#input-line-height') as HTMLInputElement;
         this.renderDiv = this.$('#svg-render') as HTMLDivElement;
         this.outputTextarea = this.$('#output-svg') as HTMLTextAreaElement;
         this.downloadButton = this.$("#download-btn") as HTMLAnchorElement;
@@ -191,6 +198,7 @@ class App {
         const bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
         const selectUnits = urlSearchParams.get('dxf-units');
         const sizeInput = urlSearchParams.get('input-size');
+        const lineHeightInput = urlSearchParams.get('input-line-height');
         const fillInput = urlSearchParams.get('input-fill');
         const strokeInput = urlSearchParams.get('input-stroke');
         const strokeWidthInput = urlSearchParams.get('input-stroke-width');
@@ -228,6 +236,9 @@ class App {
         if (sizeInput !== "" && sizeInput !== null)
             this.sizeInput.value = sizeInput;
 
+        if (lineHeightInput !== "" && lineHeightInput !== null)
+            this.lineHeightInput.value = lineHeightInput;
+
         if (fillInput !== "" && fillInput !== null)
             this.fillInput.value = fillInput;
 
@@ -253,6 +264,7 @@ class App {
             this.textInput.onchange =
             this.textInput.onkeyup =
             this.sizeInput.onkeyup =
+            this.lineHeightInput.onkeyup =
             this.unionCheckbox.onchange =
             this.filledCheckbox.onchange =
             this.kerningCheckbox.onchange =
@@ -307,25 +319,53 @@ class App {
         xhr.send();
     }
 
-    callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean,
+    callMakerjs(font: opentype.Font, text: string, size: number, lineHeight: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean,
         bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
-        //generate the text using a font
-        const textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
-
+        
+        // Split text into lines
+        const lines = text.split('\n');
+        
+        // Create a container model for all lines
+        const containerModel: MakerJs.IModel = { models: {} };
+        
+        // Process each line
+        lines.forEach((line, lineIndex) => {
+            if (line.length === 0) return; // Skip empty lines
+            
+            // Generate the text model for this line
+            const lineModel = new makerjs.models.Text(font, line, size, union, false, bezierAccuracy, { kerning });
+            
+            // Calculate vertical offset for this line
+            // Line height is relative to font size
+            const yOffset = -lineIndex * size * lineHeight;
+            
+            // Move the line to its vertical position
+            makerjs.model.move(lineModel, [0, yOffset]);
+            
+            // Add the line to the container
+            containerModel.models[`line_${lineIndex}`] = lineModel;
+        });
+        
         if (separate) {
-            for (const i in textModel.models) {
-                textModel.models[i].layer = i;
+            // Apply separate layers to each character across all lines
+            let charIndex = 0;
+            for (const lineKey in containerModel.models) {
+                const lineModel = containerModel.models[lineKey];
+                for (const charKey in lineModel.models) {
+                    lineModel.models[charKey].layer = String(charIndex);
+                    charIndex++;
+                }
             }
         }
 
-        const svg = makerjs.exporter.toSVG(textModel, {
+        const svg = makerjs.exporter.toSVG(containerModel, {
             fill: filled ? fill : undefined,
             stroke: stroke ? stroke : undefined,
             strokeWidth: strokeWidth ? strokeWidth : undefined,
             fillRule: fillRule ? fillRule : undefined,
             scalingStroke: !strokeNonScaling,
         });
-        const dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
+        const dxf = makerjs.exporter.toDXF(containerModel, { units: units, usePOLYLINE: true });
 
         this.renderDiv.innerHTML = svg;
         this.renderDiv.setAttribute('data-dxf', dxf);
@@ -337,6 +377,7 @@ class App {
         variantIndex: number,
         text: string,
         size: number,
+        lineHeight: number,
         union: boolean,
         filled: boolean,
         kerning: boolean,
@@ -355,13 +396,13 @@ class App {
         const url = f.files[v].replace('http:', 'https:');
 
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+            this.callMakerjs(this.customFont, text, size, lineHeight, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
         } else {
             opentype.load(url, (err, font) => {
                 if (err) {
                     this.errorDisplay.innerHTML = err.toString();
                 } else {
-                    this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                    this.callMakerjs(font, text, size, lineHeight, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
                 }
             });
         }
