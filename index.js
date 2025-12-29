@@ -44,14 +44,18 @@ var App = /** @class */ (function () {
             var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
-            _this.darkModeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            if (_this.darkModeToggle) {
+                _this.darkModeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            }
         };
         this.initDarkMode = function () {
             var savedTheme = localStorage.getItem('theme');
             var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             var theme = savedTheme || (prefersDark ? 'dark' : 'light');
             document.documentElement.setAttribute('data-theme', theme);
-            _this.darkModeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+            if (_this.darkModeToggle) {
+                _this.darkModeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+            }
         };
         this.renderCurrent = function () {
             _this.errorDisplay.innerHTML = '';

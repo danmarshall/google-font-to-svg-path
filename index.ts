@@ -42,7 +42,9 @@ class App {
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         
-        this.darkModeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        if (this.darkModeToggle) {
+            this.darkModeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
     };
 
     private initDarkMode = () => {
@@ -51,7 +53,9 @@ class App {
         const theme = savedTheme || (prefersDark ? 'dark' : 'light');
         
         document.documentElement.setAttribute('data-theme', theme);
-        this.darkModeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+        if (this.darkModeToggle) {
+            this.darkModeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
     };
 
     private renderCurrent = () => {
