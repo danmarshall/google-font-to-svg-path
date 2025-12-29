@@ -285,7 +285,7 @@ var App = /** @class */ (function () {
         // Trim baseline if enabled
         if (trimBaseline) {
             var measurement = makerjs.measure.modelExtents(textModel);
-            if (measurement && measurement.low) {
+            if (measurement && measurement.low && typeof measurement.low[1] === 'number') {
                 // Move the model up by the minimum y value to start at y=0
                 var offsetY = -measurement.low[1];
                 makerjs.model.moveRelative(textModel, [0, offsetY]);
