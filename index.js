@@ -291,7 +291,8 @@ var App = /** @class */ (function () {
             // Generate the text model for this line
             var lineModel = new makerjs.models.Text(font, line, size, union, false, bezierAccuracy, { kerning: kerning });
             // Calculate vertical offset for this line
-            // Line height is relative to font size
+            // Using negative offset because in SVG/font coordinates, positive Y goes up
+            // but we want lines to go down. Line 0 stays at Y=0, Line 1 moves down, etc.
             var yOffset = -lineIndex * size * lineHeight;
             // Move the line to its vertical position
             makerjs.model.move(lineModel, [0, yOffset]);
