@@ -46,7 +46,7 @@ var App = /** @class */ (function () {
                 size = parseFloat(_this.sizeInput.value);
             if (!size)
                 size = 100;
-            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value, _this.strokeWidthInput.value, _this.strokeNonScalingCheckbox.checked, _this.fillRuleInput.value);
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, _this.trimBaselineCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value, _this.strokeWidthInput.value, _this.strokeNonScalingCheckbox.checked, _this.fillRuleInput.value);
         };
         this.loadVariants = function () {
             _this.selectVariant.options.length = 0;
@@ -80,6 +80,7 @@ var App = /** @class */ (function () {
             urlSearchParams.set('input-filled', String(_this.filledCheckbox.checked));
             urlSearchParams.set('input-kerning', String(_this.kerningCheckbox.checked));
             urlSearchParams.set('input-separate', String(_this.separateCheckbox.checked));
+            urlSearchParams.set('input-trim-baseline', String(_this.trimBaselineCheckbox.checked));
             urlSearchParams.set('input-text', _this.textInput.value);
             urlSearchParams.set('input-bezier-accuracy', _this.bezierAccuracy.value);
             urlSearchParams.set('dxf-units', _this.selectUnits.value);
@@ -147,6 +148,7 @@ var App = /** @class */ (function () {
         this.filledCheckbox = this.$('#input-filled');
         this.kerningCheckbox = this.$('#input-kerning');
         this.separateCheckbox = this.$('#input-separate');
+        this.trimBaselineCheckbox = this.$('#input-trim-baseline');
         this.textInput = this.$('#input-text');
         this.bezierAccuracy = this.$('#input-bezier-accuracy');
         this.selectUnits = this.$('#dxf-units');
@@ -174,6 +176,7 @@ var App = /** @class */ (function () {
         var filledCheckbox = urlSearchParams.get('input-filled');
         var kerningCheckbox = urlSearchParams.get('input-kerning');
         var separateCheckbox = urlSearchParams.get('input-separate');
+        var trimBaselineCheckbox = urlSearchParams.get('input-trim-baseline');
         var textInput = urlSearchParams.get('input-text');
         var bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
         var selectUnits = urlSearchParams.get('dxf-units');
@@ -197,6 +200,8 @@ var App = /** @class */ (function () {
             this.kerningCheckbox.checked = kerningCheckbox === "true" ? true : false;
         if (separateCheckbox !== "" && separateCheckbox !== null)
             this.separateCheckbox.checked = separateCheckbox === "true" ? true : false;
+        if (trimBaselineCheckbox !== "" && trimBaselineCheckbox !== null)
+            this.trimBaselineCheckbox.checked = trimBaselineCheckbox === "true" ? true : false;
         if (textInput !== "" && textInput !== null)
             this.textInput.value = textInput;
         if (bezierAccuracy !== "" && bezierAccuracy !== null)
@@ -226,18 +231,19 @@ var App = /** @class */ (function () {
                             this.filledCheckbox.onchange =
                                 this.kerningCheckbox.onchange =
                                     this.separateCheckbox.onchange =
-                                        this.bezierAccuracy.onchange =
-                                            this.bezierAccuracy.onkeyup =
-                                                this.selectUnits.onchange =
-                                                    this.fillInput.onchange =
-                                                        this.fillInput.onkeyup =
-                                                            this.strokeInput.onchange =
-                                                                this.strokeInput.onkeyup =
-                                                                    this.strokeWidthInput.onchange =
-                                                                        this.strokeWidthInput.onkeyup =
-                                                                            this.strokeNonScalingCheckbox.onchange =
-                                                                                this.fillRuleInput.onchange =
-                                                                                    this.renderCurrent;
+                                        this.trimBaselineCheckbox.onchange =
+                                            this.bezierAccuracy.onchange =
+                                                this.bezierAccuracy.onkeyup =
+                                                    this.selectUnits.onchange =
+                                                        this.fillInput.onchange =
+                                                            this.fillInput.onkeyup =
+                                                                this.strokeInput.onchange =
+                                                                    this.strokeInput.onkeyup =
+                                                                        this.strokeWidthInput.onchange =
+                                                                            this.strokeWidthInput.onkeyup =
+                                                                                this.strokeNonScalingCheckbox.onchange =
+                                                                                    this.fillRuleInput.onchange =
+                                                                                        this.renderCurrent;
         // Is triggered on the document whenever a new color is picked
         document.addEventListener("coloris:pick", debounce(this.renderCurrent));
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
@@ -268,12 +274,21 @@ var App = /** @class */ (function () {
         };
         xhr.send();
     };
-    App.prototype.callMakerjs = function (font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule) {
+    App.prototype.callMakerjs = function (font, text, size, union, filled, kerning, separate, trimBaseline, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule) {
         //generate the text using a font
         var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning: kerning });
         if (separate) {
             for (var i in textModel.models) {
                 textModel.models[i].layer = i;
+            }
+        }
+        // Trim baseline if enabled
+        if (trimBaseline) {
+            var measurement = makerjs.measure.modelExtents(textModel);
+            if (measurement && measurement.low) {
+                // Move the model up by the minimum y value to start at y=0
+                var offsetY = -measurement.low[1];
+                makerjs.model.moveRelative(textModel, [0, offsetY]);
             }
         }
         var svg = makerjs.exporter.toSVG(textModel, {
@@ -288,13 +303,13 @@ var App = /** @class */ (function () {
         this.renderDiv.setAttribute('data-dxf', dxf);
         this.outputTextarea.value = svg;
     };
-    App.prototype.render = function (fontIndex, variantIndex, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule) {
+    App.prototype.render = function (fontIndex, variantIndex, text, size, union, filled, kerning, separate, trimBaseline, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule) {
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
         var url = f.files[v].replace('http:', 'https:');
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, trimBaseline, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
         }
         else {
             opentype.load(url, function (err, font) {
@@ -302,7 +317,7 @@ var App = /** @class */ (function () {
                     _this.errorDisplay.innerHTML = err.toString();
                 }
                 else {
-                    _this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                    _this.callMakerjs(font, text, size, union, filled, kerning, separate, trimBaseline, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
                 }
             });
         }

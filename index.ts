@@ -17,6 +17,7 @@ class App {
     private filledCheckbox: HTMLInputElement;
     private kerningCheckbox: HTMLInputElement;
     private separateCheckbox: HTMLInputElement;
+    private trimBaselineCheckbox: HTMLInputElement;
     private textInput: HTMLInputElement;
     private bezierAccuracy: HTMLInputElement;
     private selectUnits: HTMLSelectElement;
@@ -48,6 +49,7 @@ class App {
             this.filledCheckbox.checked,
             this.kerningCheckbox.checked,
             this.separateCheckbox.checked,
+            this.trimBaselineCheckbox.checked,
             parseFloat(this.bezierAccuracy.value) || undefined,
             this.selectUnits.value,
             this.fillInput.value,
@@ -91,6 +93,7 @@ class App {
         urlSearchParams.set('input-filled', String(this.filledCheckbox.checked));
         urlSearchParams.set('input-kerning', String(this.kerningCheckbox.checked));
         urlSearchParams.set('input-separate', String(this.separateCheckbox.checked));
+        urlSearchParams.set('input-trim-baseline', String(this.trimBaselineCheckbox.checked));
         urlSearchParams.set('input-text', this.textInput.value);
         urlSearchParams.set('input-bezier-accuracy', this.bezierAccuracy.value);
         urlSearchParams.set('dxf-units', this.selectUnits.value);
@@ -157,6 +160,7 @@ class App {
         this.filledCheckbox = this.$('#input-filled') as HTMLInputElement;
         this.kerningCheckbox = this.$('#input-kerning') as HTMLInputElement;
         this.separateCheckbox = this.$('#input-separate') as HTMLInputElement;
+        this.trimBaselineCheckbox = this.$('#input-trim-baseline') as HTMLInputElement;
         this.textInput = this.$('#input-text') as HTMLInputElement;
         this.bezierAccuracy = this.$('#input-bezier-accuracy') as HTMLInputElement;
         this.selectUnits = this.$('#dxf-units') as HTMLSelectElement;
@@ -187,6 +191,7 @@ class App {
         const filledCheckbox = urlSearchParams.get('input-filled');
         const kerningCheckbox = urlSearchParams.get('input-kerning');
         const separateCheckbox = urlSearchParams.get('input-separate');
+        const trimBaselineCheckbox = urlSearchParams.get('input-trim-baseline');
         const textInput = urlSearchParams.get('input-text');
         const bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
         const selectUnits = urlSearchParams.get('dxf-units');
@@ -218,6 +223,9 @@ class App {
 
         if (separateCheckbox !== "" && separateCheckbox !== null)
             this.separateCheckbox.checked = separateCheckbox === "true" ? true : false;
+
+        if (trimBaselineCheckbox !== "" && trimBaselineCheckbox !== null)
+            this.trimBaselineCheckbox.checked = trimBaselineCheckbox === "true" ? true : false;
 
         if (textInput !== "" && textInput !== null)
             this.textInput.value = textInput;
@@ -257,6 +265,7 @@ class App {
             this.filledCheckbox.onchange =
             this.kerningCheckbox.onchange =
             this.separateCheckbox.onchange =
+            this.trimBaselineCheckbox.onchange =
             this.bezierAccuracy.onchange =
             this.bezierAccuracy.onkeyup =
             this.selectUnits.onchange =
@@ -308,13 +317,23 @@ class App {
     }
 
     callMakerjs(font: opentype.Font, text: string, size: number, union: boolean, filled: boolean, kerning: boolean, separate: boolean,
-        bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
+        trimBaseline: boolean, bezierAccuracy: number, units: string, fill: string, stroke: string, strokeWidth: string, strokeNonScaling: boolean, fillRule: FillRule) {
         //generate the text using a font
         const textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning });
 
         if (separate) {
             for (const i in textModel.models) {
                 textModel.models[i].layer = i;
+            }
+        }
+
+        // Trim baseline if enabled
+        if (trimBaseline) {
+            const measurement = makerjs.measure.modelExtents(textModel);
+            if (measurement && measurement.low) {
+                // Move the model up by the minimum y value to start at y=0
+                const offsetY = -measurement.low[1];
+                makerjs.model.moveRelative(textModel, [0, offsetY]);
             }
         }
 
@@ -341,6 +360,7 @@ class App {
         filled: boolean,
         kerning: boolean,
         separate: boolean,
+        trimBaseline: boolean,
         bezierAccuracy: number,
         units: string,
         fill: string,
@@ -355,13 +375,13 @@ class App {
         const url = f.files[v].replace('http:', 'https:');
 
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, trimBaseline, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
         } else {
             opentype.load(url, (err, font) => {
                 if (err) {
                     this.errorDisplay.innerHTML = err.toString();
                 } else {
-                    this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                    this.callMakerjs(font, text, size, union, filled, kerning, separate, trimBaseline, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
                 }
             });
         }
