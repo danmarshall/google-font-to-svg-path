@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -39,6 +39,20 @@ var makerjs = require('makerjs');
 var App = /** @class */ (function () {
     function App() {
         var _this = this;
+        this.toggleDarkMode = function () {
+            var currentTheme = document.documentElement.getAttribute('data-theme');
+            var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            _this.darkModeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        };
+        this.initDarkMode = function () {
+            var savedTheme = localStorage.getItem('theme');
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            _this.darkModeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+        };
         this.renderCurrent = function () {
             _this.errorDisplay.innerHTML = '';
             var size = _this.sizeInput.valueAsNumber;
@@ -163,8 +177,11 @@ var App = /** @class */ (function () {
         this.strokeWidthInput = this.$('#input-stroke-width');
         this.strokeNonScalingCheckbox = this.$('#input-stroke-non-scaling');
         this.fillRuleInput = this.$("#input-fill-rule");
+        this.darkModeToggle = this.$('#dark-mode-toggle');
         // Init units select.
         Object.values(makerjs.unitType).forEach(function (unit) { return _this.addOption(_this.selectUnits, unit); });
+        // Init dark mode
+        this.initDarkMode();
     };
     App.prototype.readQueryParams = function () {
         var urlSearchParams = new URLSearchParams(window.location.search);
@@ -244,6 +261,7 @@ var App = /** @class */ (function () {
         this.downloadButton.onclick = this.downloadSvg;
         this.dxfButton.onclick = this.downloadDxf;
         this.createLinkButton.onclick = this.updateUrl;
+        this.darkModeToggle.onclick = this.toggleDarkMode;
     };
     App.prototype.$ = function (selector) {
         return document.querySelector(selector);

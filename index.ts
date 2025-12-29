@@ -33,6 +33,26 @@ class App {
     private strokeWidthInput: HTMLInputElement;
     private strokeNonScalingCheckbox: HTMLInputElement;
     private fillRuleInput: HTMLSelectElement;
+    private darkModeToggle: HTMLButtonElement;
+
+    private toggleDarkMode = () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        this.darkModeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    };
+
+    private initDarkMode = () => {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+        
+        document.documentElement.setAttribute('data-theme', theme);
+        this.darkModeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+    };
 
     private renderCurrent = () => {
         this.errorDisplay.innerHTML = '';
@@ -173,9 +193,13 @@ class App {
         this.strokeWidthInput = this.$('#input-stroke-width') as HTMLInputElement;
         this.strokeNonScalingCheckbox = this.$('#input-stroke-non-scaling') as HTMLInputElement;
         this.fillRuleInput = this.$("#input-fill-rule") as HTMLSelectElement;
+        this.darkModeToggle = this.$('#dark-mode-toggle') as HTMLButtonElement;
 
         // Init units select.
         Object.values(makerjs.unitType).forEach(unit => this.addOption(this.selectUnits, unit));
+        
+        // Init dark mode
+        this.initDarkMode();
     }
 
     readQueryParams() {
@@ -278,6 +302,7 @@ class App {
         this.downloadButton.onclick = this.downloadSvg;
         this.dxfButton.onclick = this.downloadDxf;
         this.createLinkButton.onclick = this.updateUrl;
+        this.darkModeToggle.onclick = this.toggleDarkMode;
     }
 
     $(selector: string) {
