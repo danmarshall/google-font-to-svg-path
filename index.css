@@ -48,7 +48,7 @@ svg {
     overflow: visible;
 }
 
-textarea {
+#output-svg {
     min-height: 300px;
     width: 100%;
     max-width: 800px;
@@ -118,4 +118,9 @@ textarea:focus{
     color: #FF7F50;
     font-weight: bold;
     margin-bottom: 1em;
+}
+
+/* temporary */
+#input-text {
+    vertical-align: middle;
 }

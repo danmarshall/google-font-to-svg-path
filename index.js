@@ -46,7 +46,12 @@ var App = /** @class */ (function () {
                 size = parseFloat(_this.sizeInput.value);
             if (!size)
                 size = 100;
-            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value, _this.strokeWidthInput.value, _this.strokeNonScalingCheckbox.checked, _this.fillRuleInput.value);
+            var lineHeight = _this.lineHeightInput.valueAsNumber;
+            if (!lineHeight)
+                lineHeight = parseFloat(_this.lineHeightInput.value);
+            if (!lineHeight)
+                lineHeight = 1.2;
+            _this.render(_this.selectFamily.selectedIndex, _this.selectVariant.selectedIndex, _this.textInput.value, size, lineHeight, _this.unionCheckbox.checked, _this.filledCheckbox.checked, _this.kerningCheckbox.checked, _this.separateCheckbox.checked, parseFloat(_this.bezierAccuracy.value) || undefined, _this.selectUnits.value, _this.fillInput.value, _this.strokeInput.value, _this.strokeWidthInput.value, _this.strokeNonScalingCheckbox.checked, _this.fillRuleInput.value);
         };
         this.loadVariants = function () {
             _this.selectVariant.options.length = 0;
@@ -84,6 +89,7 @@ var App = /** @class */ (function () {
             urlSearchParams.set('input-bezier-accuracy', _this.bezierAccuracy.value);
             urlSearchParams.set('dxf-units', _this.selectUnits.value);
             urlSearchParams.set('input-size', _this.sizeInput.value);
+            urlSearchParams.set('input-line-height', _this.lineHeightInput.value);
             urlSearchParams.set('input-fill', _this.fillInput.value);
             urlSearchParams.set('input-stroke', _this.strokeInput.value);
             urlSearchParams.set('input-strokeWidth', _this.strokeWidthInput.value);
@@ -151,6 +157,7 @@ var App = /** @class */ (function () {
         this.bezierAccuracy = this.$('#input-bezier-accuracy');
         this.selectUnits = this.$('#dxf-units');
         this.sizeInput = this.$('#input-size');
+        this.lineHeightInput = this.$('#input-line-height');
         this.renderDiv = this.$('#svg-render');
         this.outputTextarea = this.$('#output-svg');
         this.downloadButton = this.$("#download-btn");
@@ -178,6 +185,7 @@ var App = /** @class */ (function () {
         var bezierAccuracy = urlSearchParams.get('input-bezier-accuracy');
         var selectUnits = urlSearchParams.get('dxf-units');
         var sizeInput = urlSearchParams.get('input-size');
+        var lineHeightInput = urlSearchParams.get('input-line-height');
         var fillInput = urlSearchParams.get('input-fill');
         var strokeInput = urlSearchParams.get('input-stroke');
         var strokeWidthInput = urlSearchParams.get('input-stroke-width');
@@ -203,6 +211,8 @@ var App = /** @class */ (function () {
             this.bezierAccuracy.value = bezierAccuracy;
         if (sizeInput !== "" && sizeInput !== null)
             this.sizeInput.value = sizeInput;
+        if (lineHeightInput !== "" && lineHeightInput !== null)
+            this.lineHeightInput.value = lineHeightInput;
         if (fillInput !== "" && fillInput !== null)
             this.fillInput.value = fillInput;
         if (strokeInput !== "" && strokeInput !== null)
@@ -222,22 +232,23 @@ var App = /** @class */ (function () {
             this.textInput.onchange =
                 this.textInput.onkeyup =
                     this.sizeInput.onkeyup =
-                        this.unionCheckbox.onchange =
-                            this.filledCheckbox.onchange =
-                                this.kerningCheckbox.onchange =
-                                    this.separateCheckbox.onchange =
-                                        this.bezierAccuracy.onchange =
-                                            this.bezierAccuracy.onkeyup =
-                                                this.selectUnits.onchange =
-                                                    this.fillInput.onchange =
-                                                        this.fillInput.onkeyup =
-                                                            this.strokeInput.onchange =
-                                                                this.strokeInput.onkeyup =
-                                                                    this.strokeWidthInput.onchange =
-                                                                        this.strokeWidthInput.onkeyup =
-                                                                            this.strokeNonScalingCheckbox.onchange =
-                                                                                this.fillRuleInput.onchange =
-                                                                                    this.renderCurrent;
+                        this.lineHeightInput.onkeyup =
+                            this.unionCheckbox.onchange =
+                                this.filledCheckbox.onchange =
+                                    this.kerningCheckbox.onchange =
+                                        this.separateCheckbox.onchange =
+                                            this.bezierAccuracy.onchange =
+                                                this.bezierAccuracy.onkeyup =
+                                                    this.selectUnits.onchange =
+                                                        this.fillInput.onchange =
+                                                            this.fillInput.onkeyup =
+                                                                this.strokeInput.onchange =
+                                                                    this.strokeInput.onkeyup =
+                                                                        this.strokeWidthInput.onchange =
+                                                                            this.strokeWidthInput.onkeyup =
+                                                                                this.strokeNonScalingCheckbox.onchange =
+                                                                                    this.fillRuleInput.onchange =
+                                                                                        this.renderCurrent;
         // Is triggered on the document whenever a new color is picked
         document.addEventListener("coloris:pick", debounce(this.renderCurrent));
         this.copyToClipboardBtn.onclick = this.copyToClipboard;
@@ -268,33 +279,56 @@ var App = /** @class */ (function () {
         };
         xhr.send();
     };
-    App.prototype.callMakerjs = function (font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule) {
-        //generate the text using a font
-        var textModel = new makerjs.models.Text(font, text, size, union, false, bezierAccuracy, { kerning: kerning });
+    App.prototype.callMakerjs = function (font, text, size, lineHeight, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule) {
+        // Split text into lines
+        var lines = text.split('\n');
+        // Create a container model for all lines
+        var containerModel = { models: {} };
+        // Process each line
+        lines.forEach(function (line, lineIndex) {
+            if (line.length === 0)
+                return; // Skip empty lines
+            // Generate the text model for this line
+            var lineModel = new makerjs.models.Text(font, line, size, union, false, bezierAccuracy, { kerning: kerning });
+            // Calculate vertical offset for this line
+            // Using negative offset because in SVG/font coordinates, positive Y goes up
+            // but we want lines to go down. Line 0 stays at Y=0, Line 1 moves down, etc.
+            var yOffset = -lineIndex * size * lineHeight;
+            // Move the line to its vertical position
+            makerjs.model.move(lineModel, [0, yOffset]);
+            // Add the line to the container
+            containerModel.models["line_".concat(lineIndex)] = lineModel;
+        });
         if (separate) {
-            for (var i in textModel.models) {
-                textModel.models[i].layer = i;
+            // Apply separate layers to each character across all lines
+            var charIndex = 0;
+            for (var lineKey in containerModel.models) {
+                var lineModel = containerModel.models[lineKey];
+                for (var charKey in lineModel.models) {
+                    lineModel.models[charKey].layer = String(charIndex);
+                    charIndex++;
+                }
             }
         }
-        var svg = makerjs.exporter.toSVG(textModel, {
+        var svg = makerjs.exporter.toSVG(containerModel, {
             fill: filled ? fill : undefined,
             stroke: stroke ? stroke : undefined,
             strokeWidth: strokeWidth ? strokeWidth : undefined,
             fillRule: fillRule ? fillRule : undefined,
             scalingStroke: !strokeNonScaling,
         });
-        var dxf = makerjs.exporter.toDXF(textModel, { units: units, usePOLYLINE: true });
+        var dxf = makerjs.exporter.toDXF(containerModel, { units: units, usePOLYLINE: true });
         this.renderDiv.innerHTML = svg;
         this.renderDiv.setAttribute('data-dxf', dxf);
         this.outputTextarea.value = svg;
     };
-    App.prototype.render = function (fontIndex, variantIndex, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule) {
+    App.prototype.render = function (fontIndex, variantIndex, text, size, lineHeight, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule) {
         var _this = this;
         var f = this.fontList.items[fontIndex];
         var v = f.variants[variantIndex];
         var url = f.files[v].replace('http:', 'https:');
         if (this.customFont !== undefined) {
-            this.callMakerjs(this.customFont, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+            this.callMakerjs(this.customFont, text, size, lineHeight, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
         }
         else {
             opentype.load(url, function (err, font) {
@@ -302,7 +336,7 @@ var App = /** @class */ (function () {
                     _this.errorDisplay.innerHTML = err.toString();
                 }
                 else {
-                    _this.callMakerjs(font, text, size, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
+                    _this.callMakerjs(font, text, size, lineHeight, union, filled, kerning, separate, bezierAccuracy, units, fill, stroke, strokeWidth, strokeNonScaling, fillRule);
                 }
             });
         }
