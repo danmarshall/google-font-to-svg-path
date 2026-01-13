@@ -1,0 +1,337 @@
+import React, { useEffect, useMemo } from 'react';
+import { useAppStore, setAppState } from '../store/useAppStore';
+import { initApp } from '../store/initApp';
+import { ensureInitOnce } from '../store/initOnce';
+import makerjs from 'makerjs';
+import * as opentype from 'opentype.js';
+
+export default function Sidebar() {
+  const state = useAppStore();
+  const {
+    fontList,
+    fontFamily,
+    fontVariant,
+    text,
+    size,
+    lineHeight,
+    union,
+    kerning,
+    filled,
+    separate,
+    bezierAccuracy,
+    dxfUnits,
+    fill,
+    stroke,
+    strokeWidth,
+    strokeNonScaling,
+    fillRule,
+  } = state;
+
+  const fontVariants = fontList && fontFamily
+    ? fontList.items.find((f: any) => f.family === fontFamily)?.variants || []
+    : [];
+
+  const fontOptions = useMemo(() => {
+    if (!fontList) return <option>Loading fonts...</option>;
+    return fontList.items.map((font: any) => (
+      <option key={font.family} value={font.family}>
+        {font.family}
+      </option>
+    ));
+  }, [fontList]);
+
+  // Initialize app once globally
+  useEffect(() => {
+    ensureInitOnce(() => {
+      console.log('First mount, calling initApp');
+      initApp();
+    });
+  }, []);
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) {
+      setAppState({ customFont: undefined });
+    } else {
+      const buffer = await files[0].arrayBuffer();
+      const font = opentype.parse(buffer);
+      setAppState({ customFont: font });
+    }
+  };
+
+  const handleRemoveFont = () => {
+    const fileInput = document.getElementById('font-upload') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
+    setAppState({ customFont: undefined });
+  };
+
+  return (
+    <div>
+      <section>
+        <h2>Font Settings</h2>
+        
+        <div className="input-holder">
+          <label>
+            Google font: 
+            <select 
+              id="font-select" 
+              className="input"
+              value={fontFamily}
+              onChange={(e) => setAppState({ fontFamily: e.target.value })}
+            >
+              {fontOptions}
+            </select>
+          </label>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            (optional) upload font: 
+            <input 
+              id="font-upload" 
+              type="file" 
+              className="input"
+              onChange={handleFileUpload}
+              accept=".ttf,.otf,.woff,.woff2"
+            />
+          </label>
+          <button onClick={handleRemoveFont} className="input">Remove</button>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            variant: 
+            <select 
+              id="font-variant" 
+              className="input"
+              value={fontVariant}
+              onChange={(e) => setAppState({ fontVariant: e.target.value })}
+            >
+              {fontVariants.map((variant: string) => (
+                <option key={variant} value={variant}>
+                  {variant}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section>
+        <h2>Text Settings</h2>
+        
+        <div className="input-holder">
+          <label>
+            text: 
+            <textarea 
+              id="input-text" 
+              className="input-text input" 
+              rows={3}
+              value={text}
+              onChange={(e) => setAppState({ text: e.target.value })}
+            />
+          </label>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            size: 
+            <input 
+              type="number" 
+              id="input-size" 
+              value={size}
+              onChange={(e) => setAppState({ size: Number(e.target.value) })}
+              className="input-size input" 
+            />
+          </label>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            line height: 
+            <input 
+              type="number" 
+              id="input-line-height" 
+              value={lineHeight}
+              onChange={(e) => setAppState({ lineHeight: Number(e.target.value) })}
+              step="0.1" 
+              min="0.1" 
+              className="input" 
+            />
+          </label>
+        </div>
+      </section>
+
+      <section>
+        <h2>Options</h2>
+        
+        <div className="input-holder">
+          <label>
+            union: 
+            <input 
+              type="checkbox" 
+              id="input-union"
+              checked={union}
+              onChange={(e) => setAppState({ union: e.target.checked })}
+            />
+          </label>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            kerning: 
+            <input 
+              type="checkbox" 
+              id="input-kerning"
+              checked={kerning}
+              onChange={(e) => setAppState({ kerning: e.target.checked })}
+            />
+          </label>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            fill: 
+            <input 
+              type="checkbox" 
+              id="input-filled"
+              checked={filled}
+              onChange={(e) => setAppState({ filled: e.target.checked })}
+            />
+          </label>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            separate characters: 
+            <input 
+              type="checkbox" 
+              id="input-separate"
+              checked={separate}
+              onChange={(e) => setAppState({ separate: e.target.checked })}
+            />
+          </label>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            bezier accuracy 
+            <span title="0.5 = accurate to half a pixel &#013;.001 = accurate to 1/1000th of a pixel &#013;smaller numbers take longer to compute &#013;leave blank for auto">ℹ️</span>: 
+            <input 
+              type="text" 
+              id="input-bezier-accuracy" 
+              placeholder="auto" 
+              className="input"
+              value={bezierAccuracy}
+              onChange={(e) => setAppState({ bezierAccuracy: e.target.value })}
+            />
+          </label>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            Dxf Units: 
+            <select 
+              id="dxf-units" 
+              className="input"
+              value={dxfUnits}
+              onChange={(e) => setAppState({ dxfUnits: e.target.value })}
+            >
+              <option value="">Select units...</option>
+              {Object.values(makerjs.unitType).map((unit: any) => (
+                <option key={unit} value={unit}>
+                  {unit}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section>
+        <h2>Styling</h2>
+        
+        <div className="input-holder">
+          <label>
+            Fill: 
+            <input 
+              type="color" 
+              id="input-fill" 
+              value={fill}
+              onChange={(e) => setAppState({ fill: e.target.value })}
+              className="input-fill input" 
+            />
+            <input 
+              type="text" 
+              value={fill}
+              onChange={(e) => setAppState({ fill: e.target.value })}
+              placeholder="#000000"
+              style={{ marginLeft: '8px', width: '80px' }}
+            />
+          </label>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            Stroke: 
+            <input 
+              type="color" 
+              id="input-stroke" 
+              value={stroke}
+              onChange={(e) => setAppState({ stroke: e.target.value })}
+              className="input-stroke input" 
+            />
+            <input 
+              type="text" 
+              value={stroke}
+              onChange={(e) => setAppState({ stroke: e.target.value })}
+              placeholder="#000000"
+              style={{ marginLeft: '8px', width: '80px' }}
+            />
+          </label>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            Stroke Width: 
+            <input 
+              type="text" 
+              id="input-stroke-width" 
+              value={strokeWidth}
+              onChange={(e) => setAppState({ strokeWidth: e.target.value })}
+              className="input-stroke-width input"
+            />
+          </label>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            Non-scaling stroke: 
+            <input 
+              type="checkbox" 
+              id="input-stroke-non-scaling"
+              checked={strokeNonScaling}
+              onChange={(e) => setAppState({ strokeNonScaling: e.target.checked })}
+              className="input-stroke-non-scaling input"
+            />
+          </label>
+        </div>
+
+        <div className="input-holder">
+          <label>
+            Fill rule: 
+            <select 
+              id="input-fill-rule" 
+              className="input"
+              value={fillRule}
+              onChange={(e) => setAppState({ fillRule: e.target.value as 'evenodd' | 'nonzero' })}
+            >
+              <option value="evenodd">evenodd</option>
+              <option value="nonzero">nonzero</option>
+            </select>
+          </label>
+        </div>
+      </section>
+    </div>
+  );
+}

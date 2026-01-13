@@ -39,3 +39,6 @@ jspm_packages
 #jekyll
 _site
 .jekyll-cache
+# Astro
+.astro/
+dist/
