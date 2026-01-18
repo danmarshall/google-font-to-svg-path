@@ -2,31 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Output from './Output';
 import { loadGoogleFonts, renderSvg } from '../lib/fontUtils';
+import { defaultState } from '../store/appStore';
 
 export default function App() {
-  const [state, setState] = useState({
-    fontList: null as any,
-    fontFamily: 'ABeeZee',
-    fontVariant: 'regular',
-    customFont: undefined as any,
-    text: 'Verb',
-    size: 100,
-    lineHeight: 1.2,
-    union: false,
-    kerning: true,
-    filled: false,
-    separate: false,
-    bezierAccuracy: '',
-    dxfUnits: '',
-    fill: '#000000',
-    stroke: '#000000',
-    strokeWidth: '0.25mm',
-    strokeNonScaling: true,
-    fillRule: 'evenodd' as 'evenodd' | 'nonzero',
-    svgOutput: '',
-    dxfOutput: '',
-    errorMessage: '',
-  });
+  const [state, setState] = useState(defaultState);
 
   useEffect(() => {
     loadGoogleFonts().then(data => {

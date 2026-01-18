@@ -1,6 +1,6 @@
 type FillRule = 'nonzero' | 'evenodd';
 
-interface AppState {
+export interface AppState {
   fontList: any;
   customFont?: any;
   fontFamily: string;
@@ -24,48 +24,26 @@ interface AppState {
   errorMessage: string;
 }
 
-type Listener = () => void;
-
-class AppStore {
-  private state: AppState = {
-    fontList: null,
-    customFont: undefined,
-    fontFamily: '',
-    fontVariant: '',
-    text: 'Verb',
-    size: 100,
-    lineHeight: 1.2,
-    union: false,
-    kerning: true,
-    filled: true,
-    separate: false,
-    bezierAccuracy: '',
-    dxfUnits: '',
-    fill: '#000000',
-    stroke: '#000000',
-    strokeWidth: '0.25mm',
-    strokeNonScaling: true,
-    fillRule: 'evenodd' as FillRule,
-    svgOutput: '',
-    dxfOutput: '',
-    errorMessage: '',
-  };
-
-  private listeners: Set<Listener> = new Set();
-
-  getState(): AppState {
-    return this.state;
-  }
-
-  setState(updates: Partial<AppState>) {
-    this.state = { ...this.state, ...updates };
-    this.listeners.forEach(listener => listener());
-  }
-
-  subscribe(listener: Listener): () => void {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
-  }
-}
-
-export const appStore = new AppStore();
+export const defaultState: AppState = {
+  fontList: null,
+  customFont: undefined,
+  fontFamily: 'ABeeZee',
+  fontVariant: 'regular',
+  text: 'Verb',
+  size: 100,
+  lineHeight: 1.2,
+  union: false,
+  kerning: true,
+  filled: false,
+  separate: false,
+  bezierAccuracy: '',
+  dxfUnits: '',
+  fill: '#000000',
+  stroke: '#000000',
+  strokeWidth: '0.25mm',
+  strokeNonScaling: true,
+  fillRule: 'evenodd' as FillRule,
+  svgOutput: '',
+  dxfOutput: '',
+  errorMessage: '',
+};
