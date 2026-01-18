@@ -14,7 +14,7 @@ export default function App() {
     lineHeight: 1.2,
     union: false,
     kerning: true,
-    filled: true,
+    filled: false,
     separate: false,
     bezierAccuracy: '',
     dxfUnits: '',
