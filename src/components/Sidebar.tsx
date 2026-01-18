@@ -143,21 +143,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               className="input" 
             />
           </label>
-        </div>
-      </details>
-
-      <details open>
-        <summary>Options</summary>
-        <div>
-          <label>
-            union: 
-            <input 
-              type="checkbox" 
-              id="input-union"
-              checked={union}
-              onChange={(e) => setState(prev => ({ ...prev, union: e.target.checked }))}
-            />
-          </label>
 
           <label>
             kerning: 
@@ -169,6 +154,57 @@ export default function Sidebar({ state, setState }: SidebarProps) {
             />
           </label>
 
+        </div>
+      </details>
+
+      <details open>
+        <summary>Stroke</summary>
+        <div>
+          <label>
+            Stroke color: 
+            <input 
+              type="color" 
+              id="input-stroke" 
+              value={stroke}
+              onChange={(e) => setState(prev => ({ ...prev, stroke: e.target.value }))}
+              className="input-stroke input" 
+            />
+            <input 
+              type="text" 
+              value={stroke}
+              onChange={(e) => setState(prev => ({ ...prev, stroke: e.target.value }))}
+              placeholder="#000000"
+              style={{ marginLeft: '8px', width: '80px' }}
+            />
+          </label>
+
+          <label>
+            Stroke Width: 
+            <input 
+              type="text" 
+              id="input-stroke-width" 
+              value={strokeWidth}
+              onChange={(e) => setState(prev => ({ ...prev, strokeWidth: e.target.value }))}
+              className="input-stroke-width input"
+            />
+          </label>
+
+          <label>
+            Non-scaling stroke: 
+            <input 
+              type="checkbox" 
+              id="input-stroke-non-scaling"
+              checked={strokeNonScaling}
+              onChange={(e) => setState(prev => ({ ...prev, strokeNonScaling: e.target.checked }))}
+              className="input-stroke-non-scaling input"
+            />
+          </label>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Fill</summary>
+        <div>
           <label>
             fill: 
             <input 
@@ -176,6 +212,52 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               id="input-filled"
               checked={filled}
               onChange={(e) => setState(prev => ({ ...prev, filled: e.target.checked }))}
+            />
+          </label>
+
+          <label>
+            Fill color: 
+            <input 
+              type="color" 
+              id="input-fill" 
+              value={fill}
+              onChange={(e) => setState(prev => ({ ...prev, fill: e.target.value }))}
+              className="input-fill input" 
+            />
+            <input 
+              type="text" 
+              value={fill}
+              onChange={(e) => setState(prev => ({ ...prev, fill: e.target.value }))}
+              placeholder="#000000"
+              style={{ marginLeft: '8px', width: '80px' }}
+            />
+          </label>
+
+          <label>
+            Fill rule: 
+            <select 
+              id="input-fill-rule" 
+              className="input"
+              value={fillRule}
+              onChange={(e) => setState(prev => ({ ...prev, fillRule: e.target.value as 'evenodd' | 'nonzero' }))}
+            >
+              <option value="evenodd">evenodd</option>
+              <option value="nonzero">nonzero</option>
+            </select>
+          </label>
+        </div>
+      </details>
+
+      <details>
+        <summary>Options</summary>
+        <div>
+          <label>
+            union: 
+            <input 
+              type="checkbox" 
+              id="input-union"
+              checked={union}
+              onChange={(e) => setState(prev => ({ ...prev, union: e.target.checked }))}
             />
           </label>
 
@@ -221,81 +303,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
         </div>
       </details>
 
-      <details open>
-        <summary>Styling</summary>
-        <div>
-          <label>
-            Fill: 
-            <input 
-              type="color" 
-              id="input-fill" 
-              value={fill}
-              onChange={(e) => setState(prev => ({ ...prev, fill: e.target.value }))}
-              className="input-fill input" 
-            />
-            <input 
-              type="text" 
-              value={fill}
-              onChange={(e) => setState(prev => ({ ...prev, fill: e.target.value }))}
-              placeholder="#000000"
-              style={{ marginLeft: '8px', width: '80px' }}
-            />
-          </label>
-
-          <label>
-            Stroke: 
-            <input 
-              type="color" 
-              id="input-stroke" 
-              value={stroke}
-              onChange={(e) => setState(prev => ({ ...prev, stroke: e.target.value }))}
-              className="input-stroke input" 
-            />
-            <input 
-              type="text" 
-              value={stroke}
-              onChange={(e) => setState(prev => ({ ...prev, stroke: e.target.value }))}
-              placeholder="#000000"
-              style={{ marginLeft: '8px', width: '80px' }}
-            />
-          </label>
-
-          <label>
-            Stroke Width: 
-            <input 
-              type="text" 
-              id="input-stroke-width" 
-              value={strokeWidth}
-              onChange={(e) => setState(prev => ({ ...prev, strokeWidth: e.target.value }))}
-              className="input-stroke-width input"
-            />
-          </label>
-
-          <label>
-            Non-scaling stroke: 
-            <input 
-              type="checkbox" 
-              id="input-stroke-non-scaling"
-              checked={strokeNonScaling}
-              onChange={(e) => setState(prev => ({ ...prev, strokeNonScaling: e.target.checked }))}
-              className="input-stroke-non-scaling input"
-            />
-          </label>
-
-          <label>
-            Fill rule: 
-            <select 
-              id="input-fill-rule" 
-              className="input"
-              value={fillRule}
-              onChange={(e) => setState(prev => ({ ...prev, fillRule: e.target.value as 'evenodd' | 'nonzero' }))}
-            >
-              <option value="evenodd">evenodd</option>
-              <option value="nonzero">nonzero</option>
-            </select>
-          </label>
-        </div>
-      </details>
     </aside>
   );
 }
