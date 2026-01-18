@@ -1,18 +1,10 @@
 ---
 import Layout from '@danmarshall/tool-style/Layout.astro';
-import Sidebar from '../components/Sidebar';
-import Output from '../components/Output';
+import App from '../components/App';
 ---
 
 <Layout title="Google Font to SVG Path">
-  <link rel="stylesheet" href="/index.css" slot="head" />
-  <script is:inline src="https://cdn.jsdelivr.net/npm/bezier-js@2/bezier.js"></script>
-
-  <div slot="sidebar">
-    <Sidebar client:idle />
-  </div>
-
-  <div slot="main">
-    <Output client:idle />
-  </div>
+  <script is:inline src="https://cdn.jsdelivr.net/npm/bezier-js@2/bezier.js" slot="head"></script>
+  
+  <App client:idle slot="content" />
 </Layout>

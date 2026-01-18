@@ -1,12 +1,14 @@
-import React, { useEffect, useMemo } from 'react';
-import { useAppStore, setAppState } from '../store/useAppStore';
-import { initApp } from '../store/initApp';
-import { ensureInitOnce } from '../store/initOnce';
+import React, { useMemo } from 'react';
+// @ts-ignore
 import makerjs from 'makerjs';
 import * as opentype from 'opentype.js';
 
-export default function Sidebar() {
-  const state = useAppStore();
+interface SidebarProps {
+  state: any;
+  setState: (updater: (prev: any) => any) => void;
+}
+
+export default function Sidebar({ state, setState }: SidebarProps) {
   const {
     fontList,
     fontFamily,
@@ -40,33 +42,25 @@ export default function Sidebar() {
     ));
   }, [fontList]);
 
-  // Initialize app once globally
-  useEffect(() => {
-    ensureInitOnce(() => {
-      console.log('First mount, calling initApp');
-      initApp();
-    });
-  }, []);
-
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) {
-      setAppState({ customFont: undefined });
+      setState(prev => ({ ...prev, customFont: undefined }));
     } else {
       const buffer = await files[0].arrayBuffer();
       const font = opentype.parse(buffer);
-      setAppState({ customFont: font });
+      setState(prev => ({ ...prev, customFont: font }));
     }
   };
 
   const handleRemoveFont = () => {
     const fileInput = document.getElementById('font-upload') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
-    setAppState({ customFont: undefined });
+    setState(prev => ({ ...prev, customFont: undefined }));
   };
 
   return (
-    <div>
+    <aside>
       <section>
         <h2>Font Settings</h2>
         
@@ -77,7 +71,7 @@ export default function Sidebar() {
               id="font-select" 
               className="input"
               value={fontFamily}
-              onChange={(e) => setAppState({ fontFamily: e.target.value })}
+              onChange={(e) => setState(prev => ({ ...prev, fontFamily: e.target.value }))}
             >
               {fontOptions}
             </select>
@@ -105,7 +99,7 @@ export default function Sidebar() {
               id="font-variant" 
               className="input"
               value={fontVariant}
-              onChange={(e) => setAppState({ fontVariant: e.target.value })}
+              onChange={(e) => setState(prev => ({ ...prev, fontVariant: e.target.value }))}
             >
               {fontVariants.map((variant: string) => (
                 <option key={variant} value={variant}>
@@ -128,7 +122,7 @@ export default function Sidebar() {
               className="input-text input" 
               rows={3}
               value={text}
-              onChange={(e) => setAppState({ text: e.target.value })}
+              onChange={(e) => setState(prev => ({ ...prev, text: e.target.value }))}
             />
           </label>
         </div>
@@ -140,7 +134,7 @@ export default function Sidebar() {
               type="number" 
               id="input-size" 
               value={size}
-              onChange={(e) => setAppState({ size: Number(e.target.value) })}
+              onChange={(e) => setState(prev => ({ ...prev, size: Number(e.target.value) }))}
               className="input-size input" 
             />
           </label>
@@ -153,7 +147,7 @@ export default function Sidebar() {
               type="number" 
               id="input-line-height" 
               value={lineHeight}
-              onChange={(e) => setAppState({ lineHeight: Number(e.target.value) })}
+              onChange={(e) => setState(prev => ({ ...prev, lineHeight: Number(e.target.value) }))}
               step="0.1" 
               min="0.1" 
               className="input" 
@@ -172,7 +166,7 @@ export default function Sidebar() {
               type="checkbox" 
               id="input-union"
               checked={union}
-              onChange={(e) => setAppState({ union: e.target.checked })}
+              onChange={(e) => setState(prev => ({ ...prev, union: e.target.checked }))}
             />
           </label>
         </div>
@@ -184,7 +178,7 @@ export default function Sidebar() {
               type="checkbox" 
               id="input-kerning"
               checked={kerning}
-              onChange={(e) => setAppState({ kerning: e.target.checked })}
+              onChange={(e) => setState(prev => ({ ...prev, kerning: e.target.checked }))}
             />
           </label>
         </div>
@@ -196,7 +190,7 @@ export default function Sidebar() {
               type="checkbox" 
               id="input-filled"
               checked={filled}
-              onChange={(e) => setAppState({ filled: e.target.checked })}
+              onChange={(e) => setState(prev => ({ ...prev, filled: e.target.checked }))}
             />
           </label>
         </div>
@@ -208,7 +202,7 @@ export default function Sidebar() {
               type="checkbox" 
               id="input-separate"
               checked={separate}
-              onChange={(e) => setAppState({ separate: e.target.checked })}
+              onChange={(e) => setState(prev => ({ ...prev, separate: e.target.checked }))}
             />
           </label>
         </div>
@@ -223,7 +217,7 @@ export default function Sidebar() {
               placeholder="auto" 
               className="input"
               value={bezierAccuracy}
-              onChange={(e) => setAppState({ bezierAccuracy: e.target.value })}
+              onChange={(e) => setState(prev => ({ ...prev, bezierAccuracy: e.target.value }))}
             />
           </label>
         </div>
@@ -235,7 +229,7 @@ export default function Sidebar() {
               id="dxf-units" 
               className="input"
               value={dxfUnits}
-              onChange={(e) => setAppState({ dxfUnits: e.target.value })}
+              onChange={(e) => setState(prev => ({ ...prev, dxfUnits: e.target.value }))}
             >
               <option value="">Select units...</option>
               {Object.values(makerjs.unitType).map((unit: any) => (
@@ -258,13 +252,13 @@ export default function Sidebar() {
               type="color" 
               id="input-fill" 
               value={fill}
-              onChange={(e) => setAppState({ fill: e.target.value })}
+              onChange={(e) => setState(prev => ({ ...prev, fill: e.target.value }))}
               className="input-fill input" 
             />
             <input 
               type="text" 
               value={fill}
-              onChange={(e) => setAppState({ fill: e.target.value })}
+              onChange={(e) => setState(prev => ({ ...prev, fill: e.target.value }))}
               placeholder="#000000"
               style={{ marginLeft: '8px', width: '80px' }}
             />
@@ -278,13 +272,13 @@ export default function Sidebar() {
               type="color" 
               id="input-stroke" 
               value={stroke}
-              onChange={(e) => setAppState({ stroke: e.target.value })}
+              onChange={(e) => setState(prev => ({ ...prev, stroke: e.target.value }))}
               className="input-stroke input" 
             />
             <input 
               type="text" 
               value={stroke}
-              onChange={(e) => setAppState({ stroke: e.target.value })}
+              onChange={(e) => setState(prev => ({ ...prev, stroke: e.target.value }))}
               placeholder="#000000"
               style={{ marginLeft: '8px', width: '80px' }}
             />
@@ -298,7 +292,7 @@ export default function Sidebar() {
               type="text" 
               id="input-stroke-width" 
               value={strokeWidth}
-              onChange={(e) => setAppState({ strokeWidth: e.target.value })}
+              onChange={(e) => setState(prev => ({ ...prev, strokeWidth: e.target.value }))}
               className="input-stroke-width input"
             />
           </label>
@@ -311,7 +305,7 @@ export default function Sidebar() {
               type="checkbox" 
               id="input-stroke-non-scaling"
               checked={strokeNonScaling}
-              onChange={(e) => setAppState({ strokeNonScaling: e.target.checked })}
+              onChange={(e) => setState(prev => ({ ...prev, strokeNonScaling: e.target.checked }))}
               className="input-stroke-non-scaling input"
             />
           </label>
@@ -324,7 +318,7 @@ export default function Sidebar() {
               id="input-fill-rule" 
               className="input"
               value={fillRule}
-              onChange={(e) => setAppState({ fillRule: e.target.value as 'evenodd' | 'nonzero' })}
+              onChange={(e) => setState(prev => ({ ...prev, fillRule: e.target.value as 'evenodd' | 'nonzero' }))}
             >
               <option value="evenodd">evenodd</option>
               <option value="nonzero">nonzero</option>
@@ -332,6 +326,6 @@ export default function Sidebar() {
           </label>
         </div>
       </section>
-    </div>
+    </aside>
   );
 }

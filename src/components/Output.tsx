@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { useAppStore } from '../store/useAppStore';
 
-export default function Output() {
-  const { svgOutput, dxfOutput, errorMessage, text } = useAppStore();
+interface OutputProps {
+  state: any;
+}
+
+export default function Output({ state }: OutputProps) {
+  const { svgOutput, dxfOutput, errorMessage, text } = state;
   const [copyButtonText, setCopyButtonText] = useState('copy to clipboard');
 
   const copyToClipboard = () => {
@@ -45,7 +48,7 @@ export default function Output() {
   };
 
   return (
-    <div>
+    <main>
       <section>
         <h2>SVG Preview</h2>
         {errorMessage && (
@@ -85,6 +88,6 @@ export default function Output() {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }
