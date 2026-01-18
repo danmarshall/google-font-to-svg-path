@@ -11,6 +11,7 @@ interface SidebarProps {
 export default function Sidebar({ state, setState }: SidebarProps) {
   const {
     fontList,
+    customFont,
     fontFamily,
     fontVariant,
     text,
@@ -68,33 +69,21 @@ export default function Sidebar({ state, setState }: SidebarProps) {
             Google font: 
             <select 
               id="font-select" 
-              className="input"
               value={fontFamily}
               onChange={(e) => setState(prev => ({ ...prev, fontFamily: e.target.value }))}
+              disabled={!!customFont}
             >
               {fontOptions}
             </select>
           </label>
 
           <label>
-            (optional) upload font: 
-            <input 
-              id="font-upload" 
-              type="file" 
-              className="input"
-              onChange={handleFileUpload}
-              accept=".ttf,.otf,.woff,.woff2"
-            />
-          </label>
-          <button onClick={handleRemoveFont} className="input">Remove</button>
-
-          <label>
             variant: 
             <select 
               id="font-variant" 
-              className="input"
               value={fontVariant}
               onChange={(e) => setState(prev => ({ ...prev, fontVariant: e.target.value }))}
+              disabled={!!customFont}
             >
               {fontVariants.map((variant: string) => (
                 <option key={variant} value={variant}>
@@ -103,6 +92,18 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               ))}
             </select>
           </label>
+
+          <label>
+            (optional) upload font: 
+            <input 
+              id="font-upload" 
+              type="file" 
+              onChange={handleFileUpload}
+              accept=".ttf,.otf,.woff,.woff2"
+            />
+          </label>
+          {customFont && <button onClick={handleRemoveFont}>Remove</button>}
+
         </div>
       </details>
 
@@ -113,7 +114,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
             text: 
             <textarea 
               id="input-text" 
-              className="input-text input" 
               rows={3}
               value={text}
               onChange={(e) => setState(prev => ({ ...prev, text: e.target.value }))}
@@ -127,7 +127,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               id="input-size" 
               value={size}
               onChange={(e) => setState(prev => ({ ...prev, size: Number(e.target.value) }))}
-              className="input-size input" 
             />
           </label>
 
@@ -140,7 +139,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               onChange={(e) => setState(prev => ({ ...prev, lineHeight: Number(e.target.value) }))}
               step="0.1" 
               min="0.1" 
-              className="input" 
             />
           </label>
 
@@ -167,7 +165,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               id="input-stroke" 
               value={stroke}
               onChange={(e) => setState(prev => ({ ...prev, stroke: e.target.value }))}
-              className="input-stroke input" 
             />
             <input 
               type="text" 
@@ -185,7 +182,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               id="input-stroke-width" 
               value={strokeWidth}
               onChange={(e) => setState(prev => ({ ...prev, strokeWidth: e.target.value }))}
-              className="input-stroke-width input"
             />
           </label>
 
@@ -196,7 +192,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               id="input-stroke-non-scaling"
               checked={strokeNonScaling}
               onChange={(e) => setState(prev => ({ ...prev, strokeNonScaling: e.target.checked }))}
-              className="input-stroke-non-scaling input"
             />
           </label>
         </div>
@@ -222,7 +217,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               id="input-fill" 
               value={fill}
               onChange={(e) => setState(prev => ({ ...prev, fill: e.target.value }))}
-              className="input-fill input" 
             />
             <input 
               type="text" 
@@ -237,7 +231,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
             Fill rule: 
             <select 
               id="input-fill-rule" 
-              className="input"
               value={fillRule}
               onChange={(e) => setState(prev => ({ ...prev, fillRule: e.target.value as 'evenodd' | 'nonzero' }))}
             >
@@ -278,7 +271,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               type="text" 
               id="input-bezier-accuracy" 
               placeholder="auto" 
-              className="input"
               value={bezierAccuracy}
               onChange={(e) => setState(prev => ({ ...prev, bezierAccuracy: e.target.value }))}
             />
@@ -288,7 +280,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
             Dxf Units: 
             <select 
               id="dxf-units" 
-              className="input"
               value={dxfUnits}
               onChange={(e) => setState(prev => ({ ...prev, dxfUnits: e.target.value }))}
             >
