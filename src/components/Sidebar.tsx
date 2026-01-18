@@ -61,10 +61,9 @@ export default function Sidebar({ state, setState }: SidebarProps) {
 
   return (
     <aside>
-      <section>
-        <h2>Font Settings</h2>
-        
-        <div className="input-holder">
+      <details open>
+        <summary>Font Settings</summary>
+        <div>
           <label>
             Google font: 
             <select 
@@ -76,9 +75,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               {fontOptions}
             </select>
           </label>
-        </div>
 
-        <div className="input-holder">
           <label>
             (optional) upload font: 
             <input 
@@ -90,9 +87,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
             />
           </label>
           <button onClick={handleRemoveFont} className="input">Remove</button>
-        </div>
 
-        <div className="input-holder">
           <label>
             variant: 
             <select 
@@ -109,12 +104,11 @@ export default function Sidebar({ state, setState }: SidebarProps) {
             </select>
           </label>
         </div>
-      </section>
+      </details>
 
-      <section>
-        <h2>Text Settings</h2>
-        
-        <div className="input-holder">
+      <details open>
+        <summary>Text Settings</summary>
+        <div>
           <label>
             text: 
             <textarea 
@@ -125,9 +119,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               onChange={(e) => setState(prev => ({ ...prev, text: e.target.value }))}
             />
           </label>
-        </div>
 
-        <div className="input-holder">
           <label>
             size: 
             <input 
@@ -138,9 +130,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               className="input-size input" 
             />
           </label>
-        </div>
 
-        <div className="input-holder">
           <label>
             line height: 
             <input 
@@ -154,12 +144,11 @@ export default function Sidebar({ state, setState }: SidebarProps) {
             />
           </label>
         </div>
-      </section>
+      </details>
 
-      <section>
-        <h2>Options</h2>
-        
-        <div className="input-holder">
+      <details open>
+        <summary>Options</summary>
+        <div>
           <label>
             union: 
             <input 
@@ -169,9 +158,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               onChange={(e) => setState(prev => ({ ...prev, union: e.target.checked }))}
             />
           </label>
-        </div>
 
-        <div className="input-holder">
           <label>
             kerning: 
             <input 
@@ -181,9 +168,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               onChange={(e) => setState(prev => ({ ...prev, kerning: e.target.checked }))}
             />
           </label>
-        </div>
 
-        <div className="input-holder">
           <label>
             fill: 
             <input 
@@ -193,9 +178,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               onChange={(e) => setState(prev => ({ ...prev, filled: e.target.checked }))}
             />
           </label>
-        </div>
 
-        <div className="input-holder">
           <label>
             separate characters: 
             <input 
@@ -205,9 +188,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               onChange={(e) => setState(prev => ({ ...prev, separate: e.target.checked }))}
             />
           </label>
-        </div>
 
-        <div className="input-holder">
           <label>
             bezier accuracy 
             <span title="0.5 = accurate to half a pixel &#013;.001 = accurate to 1/1000th of a pixel &#013;smaller numbers take longer to compute &#013;leave blank for auto">ℹ️</span>: 
@@ -220,9 +201,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               onChange={(e) => setState(prev => ({ ...prev, bezierAccuracy: e.target.value }))}
             />
           </label>
-        </div>
 
-        <div className="input-holder">
           <label>
             Dxf Units: 
             <select 
@@ -240,12 +219,11 @@ export default function Sidebar({ state, setState }: SidebarProps) {
             </select>
           </label>
         </div>
-      </section>
+      </details>
 
-      <section>
-        <h2>Styling</h2>
-        
-        <div className="input-holder">
+      <details open>
+        <summary>Styling</summary>
+        <div>
           <label>
             Fill: 
             <input 
@@ -263,9 +241,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               style={{ marginLeft: '8px', width: '80px' }}
             />
           </label>
-        </div>
 
-        <div className="input-holder">
           <label>
             Stroke: 
             <input 
@@ -283,9 +259,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               style={{ marginLeft: '8px', width: '80px' }}
             />
           </label>
-        </div>
 
-        <div className="input-holder">
           <label>
             Stroke Width: 
             <input 
@@ -296,9 +270,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               className="input-stroke-width input"
             />
           </label>
-        </div>
 
-        <div className="input-holder">
           <label>
             Non-scaling stroke: 
             <input 
@@ -309,9 +281,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               className="input-stroke-non-scaling input"
             />
           </label>
-        </div>
 
-        <div className="input-holder">
           <label>
             Fill rule: 
             <select 
@@ -325,7 +295,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
             </select>
           </label>
         </div>
-      </section>
+      </details>
     </aside>
   );
 }
