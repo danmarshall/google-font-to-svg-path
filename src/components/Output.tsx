@@ -50,7 +50,6 @@ export default function Output({ state }: OutputProps) {
   return (
     <main>
       <section>
-        <h2>SVG Preview</h2>
         {errorMessage && (
           <div id="error-display" style={{ color: 'red', padding: '10px' }}>
             {errorMessage}
