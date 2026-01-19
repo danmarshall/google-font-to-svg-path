@@ -1,3 +1,10 @@
 main section {
     text-align: center;
 }
+
+/* Mobile portrait styles */
+@media (max-width: 767px) {
+    h1 {
+        font-size: 1.4rem;
+    }
+}
