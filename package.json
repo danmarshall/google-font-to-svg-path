@@ -30,6 +30,7 @@
     "@danmarshall/tool-style": "github:danmarshall/tool-style#main",
     "@types/google.fonts": "^1.0.1",
     "astro": "^5.16.11",
+    "lucide-react": "^0.562.0",
     "makerjs": "^0.18.2",
     "opentype.js": "^0.7.3",
     "react": "^19.2.3",
