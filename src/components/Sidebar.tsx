@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 // @ts-ignore
 import makerjs from 'makerjs';
 import * as opentype from 'opentype.js';
+import { ExternalLink } from 'lucide-react';
 
 interface SidebarProps {
   state: any;
@@ -65,22 +66,31 @@ export default function Sidebar({ state, setState }: SidebarProps) {
       <details open>
         <summary>Font Settings</summary>
         <div>
-          <label>
-            Google font: 
-            <select 
-              id="font-select" 
-              value={fontFamily}
-              onChange={(e) => setState(prev => ({ ...prev, fontFamily: e.target.value }))}
-              disabled={!!customFont}
+          <div className="label-with-link">
+            <label>
+              Google font:
+            </label>
+            <a
+              href="https://fonts.google.com/"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              {fontOptions}
-            </select>
-          </label>
+              Browse fonts <ExternalLink size={14} />
+            </a>
+          </div>
+          <select
+            id="font-select"
+            value={fontFamily}
+            onChange={(e) => setState(prev => ({ ...prev, fontFamily: e.target.value }))}
+            disabled={!!customFont}
+          >
+            {fontOptions}
+          </select>
 
           <label>
-            variant: 
-            <select 
-              id="font-variant" 
+            variant:
+            <select
+              id="font-variant"
               value={fontVariant}
               onChange={(e) => setState(prev => ({ ...prev, fontVariant: e.target.value }))}
               disabled={!!customFont}
@@ -94,10 +104,10 @@ export default function Sidebar({ state, setState }: SidebarProps) {
           </label>
 
           <label>
-            (optional) upload font: 
-            <input 
-              id="font-upload" 
-              type="file" 
+            (optional) upload font:
+            <input
+              id="font-upload"
+              type="file"
               onChange={handleFileUpload}
               accept=".ttf,.otf,.woff,.woff2"
             />
@@ -111,9 +121,9 @@ export default function Sidebar({ state, setState }: SidebarProps) {
         <summary>Text Settings</summary>
         <div>
           <label>
-            text: 
-            <textarea 
-              id="input-text" 
+            text:
+            <textarea
+              id="input-text"
               rows={3}
               value={text}
               onChange={(e) => setState(prev => ({ ...prev, text: e.target.value }))}
@@ -121,31 +131,32 @@ export default function Sidebar({ state, setState }: SidebarProps) {
           </label>
 
           <label>
-            size: 
-            <input 
-              type="number" 
-              id="input-size" 
+            size:
+            <input
+              type="number"
+              id="input-size"
               value={size}
               onChange={(e) => setState(prev => ({ ...prev, size: Number(e.target.value) }))}
             />
           </label>
 
           <label>
-            line height: 
-            <input 
-              type="number" 
-              id="input-line-height" 
+            line height:
+            <span title="when you have multiline text">ℹ️</span>:
+            <input
+              type="number"
+              id="input-line-height"
               value={lineHeight}
               onChange={(e) => setState(prev => ({ ...prev, lineHeight: Number(e.target.value) }))}
-              step="0.1" 
-              min="0.1" 
+              step="0.1"
+              min="0.1"
             />
           </label>
 
           <label>
-            kerning: 
-            <input 
-              type="checkbox" 
+            kerning:
+            <input
+              type="checkbox"
               id="input-kerning"
               checked={kerning}
               onChange={(e) => setState(prev => ({ ...prev, kerning: e.target.checked }))}
@@ -159,15 +170,15 @@ export default function Sidebar({ state, setState }: SidebarProps) {
         <summary>Stroke</summary>
         <div>
           <label>
-            Stroke color: 
-            <input 
-              type="color" 
-              id="input-stroke" 
+            Stroke color:
+            <input
+              type="color"
+              id="input-stroke"
               value={stroke}
               onChange={(e) => setState(prev => ({ ...prev, stroke: e.target.value }))}
             />
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={stroke}
               onChange={(e) => setState(prev => ({ ...prev, stroke: e.target.value }))}
               placeholder="#000000"
@@ -176,19 +187,19 @@ export default function Sidebar({ state, setState }: SidebarProps) {
           </label>
 
           <label>
-            Stroke Width: 
-            <input 
-              type="text" 
-              id="input-stroke-width" 
+            Stroke Width:
+            <input
+              type="text"
+              id="input-stroke-width"
               value={strokeWidth}
               onChange={(e) => setState(prev => ({ ...prev, strokeWidth: e.target.value }))}
             />
           </label>
 
           <label>
-            Non-scaling stroke: 
-            <input 
-              type="checkbox" 
+            Non-scaling stroke:
+            <input
+              type="checkbox"
               id="input-stroke-non-scaling"
               checked={strokeNonScaling}
               onChange={(e) => setState(prev => ({ ...prev, strokeNonScaling: e.target.checked }))}
@@ -201,9 +212,9 @@ export default function Sidebar({ state, setState }: SidebarProps) {
         <summary>Fill</summary>
         <div>
           <label>
-            fill: 
-            <input 
-              type="checkbox" 
+            fill:
+            <input
+              type="checkbox"
               id="input-filled"
               checked={filled}
               onChange={(e) => setState(prev => ({ ...prev, filled: e.target.checked }))}
@@ -211,15 +222,15 @@ export default function Sidebar({ state, setState }: SidebarProps) {
           </label>
 
           <label>
-            Fill color: 
-            <input 
-              type="color" 
-              id="input-fill" 
+            Fill color:
+            <input
+              type="color"
+              id="input-fill"
               value={fill}
               onChange={(e) => setState(prev => ({ ...prev, fill: e.target.value }))}
             />
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={fill}
               onChange={(e) => setState(prev => ({ ...prev, fill: e.target.value }))}
               placeholder="#000000"
@@ -228,9 +239,9 @@ export default function Sidebar({ state, setState }: SidebarProps) {
           </label>
 
           <label>
-            Fill rule: 
-            <select 
-              id="input-fill-rule" 
+            Fill rule:
+            <select
+              id="input-fill-rule"
               value={fillRule}
               onChange={(e) => setState(prev => ({ ...prev, fillRule: e.target.value as 'evenodd' | 'nonzero' }))}
             >
@@ -245,9 +256,9 @@ export default function Sidebar({ state, setState }: SidebarProps) {
         <summary>Options</summary>
         <div>
           <label>
-            union: 
-            <input 
-              type="checkbox" 
+            union:
+            <input
+              type="checkbox"
               id="input-union"
               checked={union}
               onChange={(e) => setState(prev => ({ ...prev, union: e.target.checked }))}
@@ -255,9 +266,9 @@ export default function Sidebar({ state, setState }: SidebarProps) {
           </label>
 
           <label>
-            separate characters: 
-            <input 
-              type="checkbox" 
+            separate characters:
+            <input
+              type="checkbox"
               id="input-separate"
               checked={separate}
               onChange={(e) => setState(prev => ({ ...prev, separate: e.target.checked }))}
@@ -265,21 +276,21 @@ export default function Sidebar({ state, setState }: SidebarProps) {
           </label>
 
           <label>
-            bezier accuracy 
-            <span title="0.5 = accurate to half a pixel &#013;.001 = accurate to 1/1000th of a pixel &#013;smaller numbers take longer to compute &#013;leave blank for auto">ℹ️</span>: 
-            <input 
-              type="text" 
-              id="input-bezier-accuracy" 
-              placeholder="auto" 
+            bezier accuracy
+            <span title="0.5 = accurate to half a pixel &#013;.001 = accurate to 1/1000th of a pixel &#013;smaller numbers take longer to compute &#013;leave blank for auto">ℹ️</span>:
+            <input
+              type="text"
+              id="input-bezier-accuracy"
+              placeholder="auto"
               value={bezierAccuracy}
               onChange={(e) => setState(prev => ({ ...prev, bezierAccuracy: e.target.value }))}
             />
           </label>
 
           <label>
-            Dxf Units: 
-            <select 
-              id="dxf-units" 
+            Dxf Units:
+            <select
+              id="dxf-units"
               value={dxfUnits}
               onChange={(e) => setState(prev => ({ ...prev, dxfUnits: e.target.value }))}
             >
@@ -294,6 +305,6 @@ export default function Sidebar({ state, setState }: SidebarProps) {
         </div>
       </details>
 
-    </aside>
+    </aside >
   );
 }
