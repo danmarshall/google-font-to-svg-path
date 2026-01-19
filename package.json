@@ -29,6 +29,8 @@
     "@astrojs/react": "^4.4.2",
     "@danmarshall/tool-style": "github:danmarshall/tool-style#main",
     "@types/google.fonts": "^1.0.1",
+    "@types/react": "^19.2.8",
+    "@types/react-dom": "^19.2.3",
     "astro": "^5.16.9",
     "makerjs": "^0.18.2",
     "opentype.js": "^0.7.3",

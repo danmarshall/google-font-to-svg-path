@@ -6,7 +6,9 @@
             "dom",
             "es5"
         ],
-        "moduleResolution": "bundler"
+        "moduleResolution": "bundler",
+        "jsx": "react-jsx",
+        "jsxImportSource": "react"
     },
     "exclude": [
         "_site"
