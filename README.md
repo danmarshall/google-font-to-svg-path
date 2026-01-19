@@ -21,3 +21,4 @@ You can now create SVG paths for multiple lines of text:
 - **Fill**: Fill the paths with color
 - **Separate Characters**: Assign each character to a separate layer
 - Other styling options: bezier accuracy, fill color, stroke, etc.
+
