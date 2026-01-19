@@ -1,10 +1,12 @@
 {
+    "extends": "astro/tsconfigs/strict",
     "compilerOptions": {
         "noEmitOnError": false,
         "lib": [
             "dom",
             "es5"
-        ]
+        ],
+        "moduleResolution": "bundler"
     },
     "exclude": [
         "_site"

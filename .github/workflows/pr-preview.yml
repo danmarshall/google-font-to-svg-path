@@ -1,0 +1,53 @@
+---
+name: PR Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        if: github.event.action != 'closed'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        if: github.event.action != 'closed'
+        run: npm ci
+
+      - name: Update Astro config for PR preview
+        if: github.event.action != 'closed'
+        run: |
+          cat > astro.config.mjs << 'EOF'
+          import { defineConfig } from 'astro/config';
+          import react from '@astrojs/react';
+
+          // https://astro.build/config
+          export default defineConfig({
+            integrations: [react()],
+            site: 'https://danmarshall.github.io',
+            base: '/google-font-to-svg-path/pr-preview/pr-${{ github.event.pull_request.number }}',
+          });
+          EOF
+
+      - name: Build Astro site
+        if: github.event.action != 'closed'
+        run: npm run build
+
+      - name: Deploy PR Preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./dist
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
