@@ -65,24 +65,24 @@ export default function Sidebar({ state, setState }: SidebarProps) {
       <details open>
         <summary>Font Settings</summary>
         <div>
-          <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>
-              Google font:
+          <label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+              <span>Google font:</span>
               <a 
                 href="https://fonts.google.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                style={{ marginLeft: '0.5rem', fontSize: '0.85em' }}
+                style={{ fontSize: '0.85em', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
               >
-                Browse fonts ↗
+                Browse fonts
+                <i data-lucide="external-link" style={{ width: '14px', height: '14px' }}></i>
               </a>
-            </span>
+            </div>
             <select 
               id="font-select" 
               value={fontFamily}
               onChange={(e) => setState(prev => ({ ...prev, fontFamily: e.target.value }))}
               disabled={!!customFont}
-              style={{ flex: '1', marginLeft: '0.5rem' }}
             >
               {fontOptions}
             </select>
