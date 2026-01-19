@@ -35,7 +35,7 @@ jobs:
           // https://astro.build/config
           export default defineConfig({
             site: 'https://danmarshall.github.io',
-            base: '/test-actions/pr-preview/pr-${{ github.event.pull_request.number }}',
+            base: '/google-font-to-svg-path/pr-preview/pr-${{ github.event.pull_request.number }}',
           });
           EOF
 
