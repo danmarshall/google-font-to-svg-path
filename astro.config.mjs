@@ -5,4 +5,9 @@ export default defineConfig({
   integrations: [react()],
   site: 'https://danmarshall.github.io',
   base: '/google-font-to-svg-path',
+  vite: {
+    build: {
+      minify: false
+    }
+  }
 });
