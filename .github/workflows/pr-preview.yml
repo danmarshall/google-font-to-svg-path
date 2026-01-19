@@ -31,9 +31,11 @@ jobs:
         run: |
           cat > astro.config.mjs << 'EOF'
           import { defineConfig } from 'astro/config';
+          import react from '@astrojs/react';
 
           // https://astro.build/config
           export default defineConfig({
+            integrations: [react()],
             site: 'https://danmarshall.github.io',
             base: '/google-font-to-svg-path/pr-preview/pr-${{ github.event.pull_request.number }}',
           });
