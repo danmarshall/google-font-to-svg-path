@@ -8,3 +8,27 @@ main section {
         font-size: 1.4rem;
     }
 }
+
+/* Override tool-style mobile layout to only apply in portrait orientation */
+/* Reset landscape mode to side-by-side layout */
+@media (max-width: 999px) and (orientation: landscape) {
+    .container {
+        flex-direction: row !important;
+        height: auto !important;
+    }
+    
+    aside {
+        width: 300px !important;
+        height: auto !important;
+        border-top: none !important;
+        border-right: 1px solid var(--border-color) !important;
+        order: 1 !important;
+    }
+    
+    main {
+        width: auto !important;
+        height: auto !important;
+        order: 2 !important;
+        flex: 1 !important;
+    }
+}
