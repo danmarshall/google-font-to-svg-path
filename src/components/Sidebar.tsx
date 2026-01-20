@@ -169,6 +169,8 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               type="number"
               value={letterSpacing}
               onChange={(e) => setState(prev => ({ ...prev, letterSpacing: Number(e.target.value) }))}
+              min="-50"
+              max="100"
               style={{ marginLeft: '8px', width: '60px' }}
             />
           </label>
