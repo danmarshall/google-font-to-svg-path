@@ -47,8 +47,9 @@ export async function renderSvg(state: any) {
         let charIndex = 0;
         for (const charKey in lineModel.models) {
           const charModel = lineModel.models[charKey];
-          const xOffset = charIndex * letterSpacing;
-          makerjs.model.move(charModel, [xOffset, 0]);
+          if (charIndex > 0) {
+            makerjs.model.move(charModel, [charIndex * letterSpacing, 0]);
+          }
           charIndex++;
         }
       }
