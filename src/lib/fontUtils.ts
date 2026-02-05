@@ -11,7 +11,7 @@ export async function loadGoogleFonts() {
 
 export async function renderSvg(state: any) {
   try {
-    const { fontList, fontFamily, fontVariant, customFont, text, size, lineHeight, union, filled, kerning, separate, bezierAccuracy, dxfUnits, fill, stroke, strokeWidth, strokeNonScaling, fillRule } = state;
+    const { fontList, fontFamily, fontVariant, customFont, text, size, lineHeight, letterSpacing, union, filled, kerning, separate, bezierAccuracy, dxfUnits, fill, stroke, strokeWidth, strokeNonScaling, fillRule } = state;
 
     let font: any;
 
@@ -41,6 +41,19 @@ export async function renderSvg(state: any) {
       const accuracy = parseFloat(bezierAccuracy) || undefined;
       const lineModel = new makerjs.models.Text(font, line, size, union, false, accuracy, { kerning });
       const yOffset = -lineIndex * size * lineHeight;
+
+      // Apply letter spacing by adjusting each character's origin
+      if (letterSpacing !== 0) {
+        let charIndex = 0;
+        for (const charKey in lineModel.models) {
+          const charModel = lineModel.models[charKey];
+          if (charIndex > 0 && charModel.origin) {
+            // Add to existing origin to preserve kerning (relative additive)
+            charModel.origin[0] += charIndex * letterSpacing;
+          }
+          charIndex++;
+        }
+      }
 
       makerjs.model.move(lineModel, [0, yOffset]);
       containerModel.models[`line_${lineIndex}`] = lineModel;
