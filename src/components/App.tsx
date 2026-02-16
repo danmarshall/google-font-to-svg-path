@@ -14,7 +14,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (state.fontList && state.fontFamily && state.fontVariant) {
+    if (state.customFont || (state.fontList && state.fontFamily && state.fontVariant)) {
       renderSvg(state).then(result => {
         setState(prev => ({ ...prev, ...result }));
       });
@@ -27,6 +27,7 @@ export default function App() {
     state.text,
     state.size,
     state.lineHeight,
+    state.letterSpacing,
     state.union,
     state.filled,
     state.kerning,
