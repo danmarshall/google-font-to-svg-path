@@ -29,7 +29,7 @@
     "@astrojs/react": "^4.4.2",
     "@danmarshall/tool-style": "github:danmarshall/tool-style#main",
     "@types/google.fonts": "^1.0.1",
-    "astro": "^5.16.11",
+    "astro": "^5.18.1",
     "lucide-react": "^0.562.0",
     "makerjs": "^0.19.2",
     "opentype.js": "^0.7.3",
