@@ -89,6 +89,69 @@ function requireJsxRuntime () {
 
 var jsxRuntimeExports = requireJsxRuntime();
 
+function FontezziBanner() {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      style: {
+        background: "linear-gradient(135deg, #f88028, #dc3e78)",
+        color: "#fff",
+        padding: "10px 20px",
+        textAlign: "center",
+        fontSize: "14px",
+        lineHeight: "1.4",
+        fontFamily: "system-ui, -apple-system, sans-serif",
+        width: "100%",
+        boxSizing: "border-box",
+        order: -1
+      },
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { style: { marginRight: "6px" }, children: "✨" }),
+        "This tool has evolved into",
+        " ",
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "a",
+          {
+            href: "https://fontezzi.com/editor?ref=oss",
+            target: "_blank",
+            rel: "noopener noreferrer",
+            style: {
+              color: "#fff",
+              fontWeight: 700,
+              textDecoration: "underline",
+              textUnderlineOffset: "2px"
+            },
+            children: "Fontezzi"
+          }
+        ),
+        " ",
+        "— everything here is free there too, plus shadows, layers, effects & more.",
+        " ",
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "a",
+          {
+            href: "https://fontezzi.com/editor?ref=oss",
+            target: "_blank",
+            rel: "noopener noreferrer",
+            style: {
+              display: "inline-block",
+              marginLeft: "8px",
+              background: "#fff",
+              color: "#dc3e78",
+              fontWeight: 700,
+              padding: "4px 14px",
+              borderRadius: "6px",
+              textDecoration: "none",
+              fontSize: "14px"
+            },
+            children: "Try Fontezzi free →"
+          }
+        )
+      ]
+    }
+  );
+}
+
 var clone = {exports: {}};
 
 var hasRequiredClone;
@@ -25402,7 +25465,59 @@ function Output({ state }) {
           /* @__PURE__ */ jsxRuntimeExports.jsx("button", { className: "btn", onClick: downloadDxf, children: "Download Dxf" })
         ] })
       ] })
-    ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "section",
+      {
+        style: {
+          marginTop: "40px",
+          padding: "24px",
+          background: "#faf5ff",
+          borderRadius: "12px",
+          border: "1px solid #e9d5ff",
+          fontFamily: "system-ui, -apple-system, sans-serif",
+          lineHeight: "1.6"
+        },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { style: { margin: "0 0 8px", fontSize: "18px", fontWeight: 700, color: "#1a1a2e" }, children: "This tool has a new home." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { style: { margin: "0 0 12px", color: "#4a4a6a", fontSize: "15px" }, children: [
+            "Everything you can do here is 100% free on",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "a",
+              {
+                href: "https://fontezzi.com/editor?ref=oss-footer",
+                target: "_blank",
+                rel: "noopener noreferrer",
+                style: { color: "#dc3e78", fontWeight: 600 },
+                children: "Fontezzi"
+              }
+            ),
+            " ",
+            "— same fonts, same SVG output, same downloads. Plus you get shadows, outlines, layers, and more. Pro users also get batch automation and React export. You lose nothing."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "a",
+            {
+              href: "https://fontezzi.com/editor?ref=oss-footer",
+              target: "_blank",
+              rel: "noopener noreferrer",
+              style: {
+                display: "inline-block",
+                background: "linear-gradient(135deg, #f88028, #dc3e78)",
+                color: "#fff",
+                fontWeight: 700,
+                padding: "8px 20px",
+                borderRadius: "8px",
+                textDecoration: "none",
+                fontSize: "15px"
+              },
+              children: "Try Fontezzi free →"
+            }
+          )
+        ]
+      }
+    )
   ] });
 }
 
@@ -25530,6 +25645,7 @@ function App() {
     state.fillRule
   ]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(FontezziBanner, {}),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Sidebar, { state, setState }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Output, { state })
   ] });

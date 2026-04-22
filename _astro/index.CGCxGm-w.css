@@ -491,3 +491,7 @@ input[type="reset"] + input[type="reset"] {
 main section {
     text-align: center;
 }
+
+.container {
+    flex-wrap: wrap;
+}
