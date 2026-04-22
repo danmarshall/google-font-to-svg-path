@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import FontezziBanner from './FontezziBanner';
 import Sidebar from './Sidebar';
 import Output from './Output';
 import { loadGoogleFonts, renderSvg } from '../lib/fontUtils';
@@ -42,6 +43,7 @@ export default function App() {
 
   return (
     <>
+      <FontezziBanner />
       <Sidebar state={state} setState={setState} />
       <Output state={state} />
     </>

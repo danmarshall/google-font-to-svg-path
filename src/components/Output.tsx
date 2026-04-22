@@ -87,6 +87,51 @@ export default function Output({ state }: OutputProps) {
           </div>
         </div>
       </section>
+
+      <section
+        style={{
+          marginTop: '40px',
+          padding: '24px',
+          background: '#faf5ff',
+          borderRadius: '12px',
+          border: '1px solid #e9d5ff',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+          lineHeight: '1.6',
+        }}
+      >
+        <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 700, color: '#1a1a2e' }}>
+          This tool has a new home.
+        </h3>
+        <p style={{ margin: '0 0 12px', color: '#4a4a6a', fontSize: '15px' }}>
+          Everything you can do here is 100% free on{' '}
+          <a
+            href="https://fontezzi.com/editor?ref=oss-footer"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#dc3e78', fontWeight: 600 }}
+          >
+            Fontezzi
+          </a>{' '}
+          — same fonts, same SVG output, same downloads. Plus you get shadows, outlines, layers, and more. Pro users also get batch automation and React export. You lose nothing.
+        </p>
+        <a
+          href="https://fontezzi.com/editor?ref=oss-footer"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'inline-block',
+            background: 'linear-gradient(135deg, #f88028, #dc3e78)',
+            color: '#fff',
+            fontWeight: 700,
+            padding: '8px 20px',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            fontSize: '15px',
+          }}
+        >
+          Try Fontezzi free →
+        </a>
+      </section>
     </main>
   );
 }

@@ -1,3 +1,7 @@
 main section {
     text-align: center;
 }
+
+.container {
+    flex-wrap: wrap;
+}
