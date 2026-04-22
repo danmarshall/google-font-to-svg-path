@@ -1,6 +1,8 @@
 # google-font-to-svg-path
 Create an SVG path from a Google font
 
+> ✨ **This tool has evolved into [Fontezzi](https://fontezzi.com?ref=gh-readme).** Everything here is 100% free there too — plus shadows, layers, effects & more.
+
 https://danmarshall.github.io/google-font-to-svg-path
 
 ## Features
@@ -21,4 +23,20 @@ You can now create SVG paths for multiple lines of text:
 - **Fill**: Fill the paths with color
 - **Separate Characters**: Assign each character to a separate layer
 - Other styling options: bezier accuracy, fill color, stroke, etc.
+
+## Fontezzi — the new home for this tool
+
+Everything google-font-to-svg-path does is **free on Fontezzi** — same Google Fonts, same SVG path output, same downloads. You lose nothing. You gain:
+
+- 🎨 Shadows, outlines, halos, arc warp & 15+ effects
+- 📐 Multi-layer compositions
+- 📸 Snapshot comparison & Showdowns
+- 🔗 Shareable Showdown links *(Pro)*
+- ⚛️ React `.tsx` export
+- 📦 Batch automation from CSV *(Pro)*
+- 🖥️ Mobile-friendly editor
+
+The core editor and basic effects are completely free. Pro unlocks cloud sync, batch automation, and more.
+
+Built by the same author. **[Try Fontezzi free →](https://fontezzi.com?ref=gh-readme)**
 
