@@ -40,7 +40,7 @@ export const defaultState: AppState = {
   dxfUnits: '',
   fill: '#000000',
   stroke: '#000000',
-  strokeWidth: '0.25mm',
+  strokeWidth: '',
   strokeNonScaling: true,
   fillRule: 'evenodd' as FillRule,
   svgOutput: '',
