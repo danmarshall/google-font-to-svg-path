@@ -18,6 +18,7 @@ export default function Sidebar({ state, setState }: SidebarProps) {
     text,
     size,
     lineHeight,
+    letterSpacing,
     union,
     kerning,
     filled,
@@ -150,6 +151,30 @@ export default function Sidebar({ state, setState }: SidebarProps) {
               onChange={(e) => setState(prev => ({ ...prev, lineHeight: Number(e.target.value) }))}
               step="0.1"
               min="0.1"
+            />
+          </label>
+
+          <label>
+            letter spacing:
+            <input
+              type="range"
+              id="input-letter-spacing"
+              value={letterSpacing}
+              onChange={(e) => setState(prev => ({ ...prev, letterSpacing: Number(e.target.value) }))}
+              min="-50"
+              max="100"
+              step="1"
+            />
+            <input
+              type="number"
+              value={letterSpacing}
+              onChange={(e) => {
+                const value = Math.max(-50, Math.min(100, Number(e.target.value)));
+                setState(prev => ({ ...prev, letterSpacing: value }));
+              }}
+              min="-50"
+              max="100"
+              style={{ marginLeft: '8px', width: '60px' }}
             />
           </label>
 

@@ -8,6 +8,7 @@ export interface AppState {
   text: string;
   size: number;
   lineHeight: number;
+  letterSpacing: number;
   union: boolean;
   kerning: boolean;
   filled: boolean;
@@ -32,6 +33,7 @@ export const defaultState: AppState = {
   text: 'Verb',
   size: 100,
   lineHeight: 1.2,
+  letterSpacing: 0,
   union: false,
   kerning: true,
   filled: false,
