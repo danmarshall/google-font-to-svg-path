@@ -1,4 +1,4 @@
-import { a as __toCommonJS, i as __exportAll, n as __commonJSMin, o as __toESM, r as __esmMin, t as require_react } from "./react.DzQG-moF.js";
+import { a as __toCommonJS, i as __exportAll, n as __commonJSMin, o as __toESM, r as __esmMin, t as require_react } from "./react.DplS8NRw.js";
 //#region node_modules/react/cjs/react-jsx-runtime.production.js
 /**
 * @license React
@@ -634,8 +634,8 @@ var require_utils = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				return abs(a - b) <= (precision || epsilon);
 			},
 			length: function(derivativeFn) {
-				var z = .5, sum = 0, len = utils.Tvalues.length, i, t;
-				for (i = 0; i < len; i++) {
+				var z = .5, sum = 0, len = utils.Tvalues.length, i = 0, t;
+				for (; i < len; i++) {
 					t = z * utils.Tvalues[i] + z;
 					sum += utils.Cvalues[i] * utils.arcfn(t, derivativeFn);
 				}
@@ -961,8 +961,8 @@ var require_utils = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				});
 			},
 			bboxoverlap: function(b1, b2) {
-				var dims = ["x", "y"], len = dims.length, i, dim, l, t, d;
-				for (i = 0; i < len; i++) {
+				var dims = ["x", "y"], len = dims.length, i = 0, dim, l, t, d;
+				for (; i < len; i++) {
 					dim = dims[i];
 					l = b1[dim].mid;
 					t = b2[dim].mid;
@@ -3510,7 +3510,6 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 							Circle.call(this, args[0], args[1]);
 							this.startAngle = MakerJs.angle.ofPointInDegrees(this.origin, args[clockwise ? 1 : 0]);
 							this.endAngle = MakerJs.angle.ofPointInDegrees(this.origin, args[clockwise ? 0 : 1]);
-							break;
 					}
 					this.type = MakerJs.pathType.Arc;
 				}
@@ -3550,7 +3549,6 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 								this.origin = origin;
 								this.radius = MakerJs.measure.pointDistance(this.origin, args[0]);
 							} else throw "invalid parameters - attempted to construct a circle from 3 points on a line: " + JSON.stringify(args);
-							break;
 					}
 				}
 				return Circle;
@@ -3573,7 +3571,6 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 						case 2:
 							this.origin = args[0];
 							this.end = args[1];
-							break;
 					}
 				}
 				return Line;
@@ -3957,9 +3954,10 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				var distortedPath = MakerJs.path.distort(pathToDistort, scaleX, scaleY);
 				layer = layer || pathToDistort.layer;
 				if (layer) distortedPath.layer = layer;
-				if (MakerJs.isPath(distortedPath)) if (distortedPath.type === MakerJs.pathType.BezierSeed) addModel(parentModel, new MakerJs.models.BezierCurve(distortedPath, bezierAccuracy), pathId);
-				else addPath(parentModel, distortedPath, pathId);
-				else addModel(parentModel, distortedPath, pathId);
+				if (MakerJs.isPath(distortedPath)) {
+					if (distortedPath.type === MakerJs.pathType.BezierSeed) addModel(parentModel, new MakerJs.models.BezierCurve(distortedPath, bezierAccuracy), pathId);
+					else addPath(parentModel, distortedPath, pathId);
+				} else addModel(parentModel, distortedPath, pathId);
 			}
 			/**
 			* Create a distorted copy of a model - scale x and y individually.
@@ -4309,9 +4307,10 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				var savedMeasurement = atlas.pathMap[crossedPath.routeKey];
 				delete crossedPath.modelContext.paths[crossedPath.pathId];
 				delete atlas.pathMap[crossedPath.routeKey];
-				for (var i = 0; i < crossedPath.segments.length; i++) if (crossedPath.segments[i].duplicate) if (keepDuplicates) addSegment(crossedPath.modelContext, crossedPath.pathId, crossedPath.segments[i]);
-				else trackDeleted(crossedPath.segments[i].absolutePath, crossedPath.routeKey, "segment is duplicate");
-				else checkAddSegment(crossedPath.modelContext, crossedPath.pathId, crossedPath.segments[i]);
+				for (var i = 0; i < crossedPath.segments.length; i++) if (crossedPath.segments[i].duplicate) {
+					if (keepDuplicates) addSegment(crossedPath.modelContext, crossedPath.pathId, crossedPath.segments[i]);
+					else trackDeleted(crossedPath.segments[i].absolutePath, crossedPath.routeKey, "segment is duplicate");
+				} else checkAddSegment(crossedPath.modelContext, crossedPath.pathId, crossedPath.segments[i]);
 			}
 			/**
 			* Combine 2 models. Each model will be modified accordingly.
@@ -4625,8 +4624,10 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				var px = this.graph[p[0]];
 				if (px) {
 					var pointId = px[p[1]];
-					if (pointId >= 0) if (pointId in this.merged) return this.merged[pointId];
-					else return pointId;
+					if (pointId >= 0) {
+						if (pointId in this.merged) return this.merged[pointId];
+						else return pointId;
+					}
 				}
 			};
 			/**
@@ -5383,9 +5384,7 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					case 0:
 						ordered.unshift(ordered.pop());
 						break;
-					case 2:
-						ordered.push(ordered.shift());
-						break;
+					case 2: ordered.push(ordered.shift());
 				}
 				if (out_result) {
 					out_result.hullPoints = hull.map(function(p) {
@@ -6398,23 +6397,25 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					if (angles) {
 						var arc1Angles = getAnglesWithinArc(angles[0], arc1, options);
 						var arc2Angles = getAnglesWithinArc(angles[1], arc2, options);
-						if (arc1Angles && arc2Angles) if (arc1Angles.length === 1 || arc2Angles.length === 1) for (var i1 = 0; i1 < arc1Angles.length; i1++) for (var i2 = 0; i2 < arc2Angles.length; i2++) {
-							var p1 = MakerJs.point.fromAngleOnCircle(arc1Angles[i1], arc1);
-							var p2 = MakerJs.point.fromAngleOnCircle(arc2Angles[i2], arc2);
-							if (MakerJs.measure.isPointEqual(p1, p2, 1e-4)) {
-								result = {
-									intersectionPoints: [p1],
-									path1Angles: [arc1Angles[i1]],
-									path2Angles: [arc2Angles[i2]]
-								};
-								return;
+						if (arc1Angles && arc2Angles) {
+							if (arc1Angles.length === 1 || arc2Angles.length === 1) for (var i1 = 0; i1 < arc1Angles.length; i1++) for (var i2 = 0; i2 < arc2Angles.length; i2++) {
+								var p1 = MakerJs.point.fromAngleOnCircle(arc1Angles[i1], arc1);
+								var p2 = MakerJs.point.fromAngleOnCircle(arc2Angles[i2], arc2);
+								if (MakerJs.measure.isPointEqual(p1, p2, 1e-4)) {
+									result = {
+										intersectionPoints: [p1],
+										path1Angles: [arc1Angles[i1]],
+										path2Angles: [arc2Angles[i2]]
+									};
+									return;
+								}
 							}
+							else result = {
+								intersectionPoints: pointsFromAnglesOnCircle(arc1Angles, arc1),
+								path1Angles: arc1Angles,
+								path2Angles: arc2Angles
+							};
 						}
-						else result = {
-							intersectionPoints: pointsFromAnglesOnCircle(arc1Angles, arc1),
-							path1Angles: arc1Angles,
-							path2Angles: arc2Angles
-						};
 					} else if (options.out_AreOverlapped) options.out_AreOverlapped = MakerJs.measure.isArcOverlapping(arc1, arc2, options.excludeTangents);
 				});
 				return result;
@@ -6708,8 +6709,10 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					var circleIntersection = path.intersection(referenceCircle, properties[i].path);
 					if (!circleIntersection) return false;
 					properties[i].shardPoint = circleIntersection.intersectionPoints[0];
-					if (MakerJs.measure.isPointEqual(properties[i].point, circleIntersection.intersectionPoints[0], 1e-4)) if (circleIntersection.intersectionPoints.length > 1) properties[i].shardPoint = circleIntersection.intersectionPoints[1];
-					else return false;
+					if (MakerJs.measure.isPointEqual(properties[i].point, circleIntersection.intersectionPoints[0], 1e-4)) {
+						if (circleIntersection.intersectionPoints.length > 1) properties[i].shardPoint = circleIntersection.intersectionPoints[1];
+						else return false;
+					}
 				}
 				return true;
 			}
@@ -7085,7 +7088,6 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					case 2:
 						callback = args[0];
 						options = args[1];
-						break;
 				}
 				var opts = { pointMatchingDistance: .005 };
 				MakerJs.extendObject(opts, options);
@@ -9425,7 +9427,6 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 						case 4:
 							this.controls = [args[1], args[2]];
 							this.end = args[3];
-							break;
 					}
 				}
 				return BezierSeed;
@@ -9449,21 +9450,18 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 								this.seed = new BezierSeed(points);
 							} else this.seed = args[0];
 							break;
-						default:
-							switch (args.length) {
-								case 4: if (MakerJs.isPoint(args[3])) {
-									this.seed = new BezierSeed(args);
-									break;
-								} else this.accuracy = args[3];
-								case 3:
-									if (isArrayArg0) this.seed = new BezierSeed(args.slice(0, 3));
-									break;
-								case 5:
-									this.accuracy = args[4];
-									this.seed = new BezierSeed(args.slice(0, 4));
-									break;
-							}
-							break;
+						default: switch (args.length) {
+							case 4: if (MakerJs.isPoint(args[3])) {
+								this.seed = new BezierSeed(args);
+								break;
+							} else this.accuracy = args[3];
+							case 3:
+								if (isArrayArg0) this.seed = new BezierSeed(args.slice(0, 3));
+								break;
+							case 5:
+								this.accuracy = args[4];
+								this.seed = new BezierSeed(args.slice(0, 4));
+						}
 					}
 					this.paths = {};
 					if (MakerJs.measure.isBezierSeedLinear(this.seed)) {
@@ -9609,9 +9607,7 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 							case 3:
 								_this.origin = args[0];
 								break;
-							case 4:
-								_this.origin = [args[0], args[1]];
-								break;
+							case 4: _this.origin = [args[0], args[1]];
 						}
 						var a = 360 / n;
 						var arc = new MakerJs.paths.Arc([0, 0], 1, 0, a);
@@ -9628,9 +9624,7 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 								case 3:
 									seed = MakerJs.path.distort(seed, args[1], args[2]);
 									break;
-								case 4:
-									seed = MakerJs.path.distort(seed, args[2], args[3]);
-									break;
+								case 4: seed = MakerJs.path.distort(seed, args[2], args[3]);
 							}
 							_this.models["Curve_" + (1 + i)] = new models.BezierCurve(seed, accuracy);
 							arc.startAngle += a;
@@ -9657,7 +9651,6 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 						case 5:
 							accuracy = args[4];
 							realArgs(4);
-							break;
 					}
 				}
 				return Ellipse;
@@ -9775,7 +9768,6 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 						case 2:
 							isClosed = args[0];
 							points = getPoints(args[1]);
-							break;
 					}
 					var connect = function(a, b, skipZeroDistance) {
 						if (skipZeroDistance === void 0) skipZeroDistance = false;
@@ -10069,9 +10061,7 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 						case 1:
 							maxRadius = maxSide / 2;
 							break;
-						default:
-							maxRadius = maxSide * Math.SQRT2 / 2;
-							break;
+						default: maxRadius = maxSide * Math.SQRT2 / 2;
 					}
 					radius = Math.min(radius, maxRadius);
 					var ax;
@@ -10113,7 +10103,6 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 								45,
 								135
 							];
-							break;
 					}
 					if (bottomless) {
 						this.paths["Left"] = new MakerJs.paths.Line([0, 0], [0, height - ly]);
@@ -10251,7 +10240,6 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 							this.origin = MakerJs.point.subtract(m.low, [radius, radius]);
 							width = m.high[0] - m.low[0] + 2 * radius;
 							height = m.high[1] - m.low[1] + 2 * radius;
-							break;
 					}
 					var maxRadius = Math.min(height, width) / 2;
 					radius = Math.min(radius, maxRadius);
@@ -10882,7 +10870,6 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 											case "quadraticCurveTo":
 												if (layerCurrPoint) addModel(new models.BezierCurve(layerCurrPoint, points[0], points[1], bezierAccuracy), layerColor);
 												layerCurrPoint = points[1];
-												break;
 										}
 									}
 								}
@@ -10910,7 +10897,6 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 								case "quadraticCurveTo":
 									addModel(new models.BezierCurve(currPoint, points[0], points[1], bezierAccuracy));
 									currPoint = points[1];
-									break;
 							}
 						}
 					} else {
@@ -10934,9 +10920,7 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 								case "C":
 									addModel(new models.BezierCurve(currPoint, points[1], points[2], points[0], bezierAccuracy));
 									break;
-								case "Q":
-									addModel(new models.BezierCurve(currPoint, points[1], points[0], bezierAccuracy));
-									break;
+								case "Q": addModel(new models.BezierCurve(currPoint, points[1], points[0], bezierAccuracy));
 							}
 							currPoint = points[0];
 						});
@@ -10964,7 +10948,6 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 							points.push([cmd.args[0] * scale, cmd.args[1] * scale]);
 							points.push([cmd.args[2] * scale, cmd.args[3] * scale]);
 							points.push([cmd.args[4] * scale, cmd.args[5] * scale]);
-							break;
 					}
 					return points;
 				};
@@ -11054,8 +11037,8 @@ var require_tiny_inflate = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var code_tree = new Tree();
 	var lengths = /* @__PURE__ */ new Uint8Array(320);
 	function tinf_build_bits_base(bits, base, delta, first) {
-		var i, sum;
-		for (i = 0; i < delta; ++i) bits[i] = 0;
+		var i = 0, sum;
+		for (; i < delta; ++i) bits[i] = 0;
 		for (i = 0; i < 30 - delta; ++i) bits[i + delta] = i / delta | 0;
 		for (sum = first, i = 0; i < 30; ++i) {
 			base[i] = sum;
@@ -11063,8 +11046,8 @@ var require_tiny_inflate = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		}
 	}
 	function tinf_build_fixed_trees(lt, dt) {
-		var i;
-		for (i = 0; i < 7; ++i) lt.table[i] = 0;
+		var i = 0;
+		for (; i < 7; ++i) lt.table[i] = 0;
 		lt.table[7] = 24;
 		lt.table[8] = 152;
 		lt.table[9] = 112;
@@ -11078,8 +11061,8 @@ var require_tiny_inflate = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	}
 	var offs = /* @__PURE__ */ new Uint16Array(16);
 	function tinf_build_tree(t, lengths, off, num) {
-		var i, sum;
-		for (i = 0; i < 16; ++i) t.table[i] = 0;
+		var i = 0, sum;
+		for (; i < 16; ++i) t.table[i] = 0;
 		for (i = 0; i < num; ++i) t.table[lengths[off + i]]++;
 		t.table[0] = 0;
 		for (sum = 0, i = 0; i < 16; ++i) {
@@ -11151,9 +11134,7 @@ var require_tiny_inflate = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				case 18:
 					for (length = tinf_read_bits(d, 7, 11); length; --length) lengths[num++] = 0;
 					break;
-				default:
-					lengths[num++] = sym;
-					break;
+				default: lengths[num++] = sym;
 			}
 		}
 		tinf_build_tree(lt, lengths, 0, hlit);
@@ -11213,8 +11194,10 @@ var require_tiny_inflate = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			}
 			if (res !== TINF_OK) throw new Error("Data error");
 		} while (!bfinal);
-		if (d.destLen < d.dest.length) if (typeof d.dest.slice === "function") return d.dest.slice(0, d.destLen);
-		else return d.dest.subarray(0, d.destLen);
+		if (d.destLen < d.dest.length) {
+			if (typeof d.dest.slice === "function") return d.dest.slice(0, d.destLen);
+			else return d.dest.subarray(0, d.destLen);
+		}
 		return d.dest;
 	}
 	tinf_build_fixed_trees(sltree, sdtree);
@@ -11598,8 +11581,10 @@ Path.prototype.toSVG = function(decimalPlaces) {
 	let svg = "<path d=\"";
 	svg += this.toPathData(decimalPlaces);
 	svg += "\"";
-	if (this.fill && this.fill !== "black") if (this.fill === null) svg += " fill=\"none\"";
-	else svg += " fill=\"" + this.fill + "\"";
+	if (this.fill && this.fill !== "black") {
+		if (this.fill === null) svg += " fill=\"none\"";
+		else svg += " fill=\"" + this.fill + "\"";
+	}
 	if (this.stroke) svg += " stroke=\"" + this.stroke + "\" stroke-width=\"" + this.strokeWidth + "\"";
 	svg += "/>";
 	return svg;
@@ -14362,9 +14347,7 @@ function GlyphNames(post) {
 		case 3:
 			this.names = [];
 			break;
-		default:
-			this.names = [];
-			break;
+		default: this.names = [];
 	}
 }
 /**
@@ -14398,9 +14381,10 @@ function addGlyphNames(font) {
 	}
 	for (let i = 0; i < font.glyphs.length; i += 1) {
 		glyph = font.glyphs.get(i);
-		if (font.cffEncoding) if (font.isCIDFont) glyph.name = "gid" + i;
-		else glyph.name = font.cffEncoding.charset[i];
-		else if (font.glyphNames.names) glyph.name = font.glyphNames.glyphIndexToName(i);
+		if (font.cffEncoding) {
+			if (font.isCIDFont) glyph.name = "gid" + i;
+			else glyph.name = font.cffEncoding.charset[i];
+		} else if (font.glyphNames.names) glyph.name = font.glyphNames.glyphIndexToName(i);
 	}
 }
 //#endregion
@@ -14498,11 +14482,12 @@ function parseGlyph(glyph, data, start) {
 				dx: 0,
 				dy: 0
 			};
-			if ((flags & 1) > 0) if ((flags & 2) > 0) {
-				component.dx = p.parseShort();
-				component.dy = p.parseShort();
-			} else component.matchedPoints = [p.parseUShort(), p.parseUShort()];
-			else if ((flags & 2) > 0) {
+			if ((flags & 1) > 0) {
+				if ((flags & 2) > 0) {
+					component.dx = p.parseShort();
+					component.dy = p.parseShort();
+				} else component.matchedPoints = [p.parseUShort(), p.parseUShort()];
+			} else if ((flags & 2) > 0) {
 				component.dx = p.parseChar();
 				component.dy = p.parseChar();
 			} else component.matchedPoints = [p.parseByte(), p.parseByte()];
@@ -17195,9 +17180,7 @@ function getEncoding(platformID, encodingID, languageID) {
 	switch (platformID) {
 		case 0: return utf16;
 		case 1: return macLanguageEncodings[languageID] || macScriptEncodings[encodingID];
-		case 3:
-			if (encodingID === 1 || encodingID === 10) return utf16;
-			break;
+		case 3: if (encodingID === 1 || encodingID === 10) return utf16;
 	}
 }
 function parseNameTable(data, start, ltag) {
@@ -18193,7 +18176,6 @@ function parsePostTable(data, start) {
 			post.numberOfGlyphs = p.parseUShort();
 			post.offset = new Array(post.numberOfGlyphs);
 			for (let i = 0; i < post.numberOfGlyphs; i++) post.offset[i] = p.parseChar();
-			break;
 	}
 	return post;
 }
@@ -18444,7 +18426,6 @@ subtableMakers[1] = function makeLookup1(subtable) {
 		type: "TABLE",
 		value: new table_default.Coverage(subtable.coverage)
 	}].concat(table_default.ushortList("substitute", subtable.substitute)));
-	check_default.fail("Lookup type 1 substFormat must be 1 or 2.");
 };
 subtableMakers[3] = function makeLookup3(subtable) {
 	check_default.assert(subtable.substFormat === 1, "Lookup type 3 substFormat must be 1.");
@@ -22395,9 +22376,7 @@ function parseBuffer(buffer) {
 			case "GSUB":
 				gsubTableEntry = tableEntry;
 				break;
-			case "meta":
-				metaTableEntry = tableEntry;
-				break;
+			case "meta": metaTableEntry = tableEntry;
 		}
 	}
 	const nameTable = uncompressTable(data, nameTableEntry);
