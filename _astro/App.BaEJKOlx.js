@@ -1,5 +1,5 @@
-import { a as __toCommonJS, i as __exportAll, n as __commonJSMin, o as __toESM, r as __esmMin, t as require_react } from "./react.BEUfxbPS.js";
-//#region node_modules/react/cjs/react-jsx-runtime.production.js
+import { a as __toCommonJS, i as __exportAll, n as __commonJSMin, o as __toESM, r as __esmMin, t as require_react } from "./react.D4kHKyMH.js";
+// node_modules/react/cjs/react-jsx-runtime.production.js
 /**
 * @license React
 * react-jsx-runtime.production.js
@@ -33,13 +33,11 @@ var require_react_jsx_runtime_production = /* @__PURE__ */ __commonJSMin(((expor
 	exports.jsx = jsxProd;
 	exports.jsxs = jsxProd;
 }));
-//#endregion
-//#region node_modules/react/jsx-runtime.js
+// node_modules/react/jsx-runtime.js
 var require_jsx_runtime = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_react_jsx_runtime_production();
 }));
-//#endregion
-//#region src/components/FontezziBanner.tsx
+// src/components/FontezziBanner.tsx
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function FontezziBanner() {
@@ -98,8 +96,7 @@ function FontezziBanner() {
 		]
 	});
 }
-//#endregion
-//#region node_modules/clone/clone.js
+// node_modules/clone/clone.js
 var require_clone = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var clone = (function() {
 		"use strict";
@@ -213,8 +210,7 @@ var require_clone = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	})();
 	if (typeof module === "object" && module.exports) module.exports = clone;
 }));
-//#endregion
-//#region node_modules/kdbush/src/sort.js
+// node_modules/kdbush/src/sort.js
 function sortKD(ids, coords, nodeSize, left, right, depth) {
 	if (right - left <= nodeSize) return;
 	var m = Math.floor((left + right) / 2);
@@ -264,8 +260,7 @@ function swap(arr, i, j) {
 	arr[j] = tmp;
 }
 var init_sort = __esmMin((() => {}));
-//#endregion
-//#region node_modules/kdbush/src/range.js
+// node_modules/kdbush/src/range.js
 function range(ids, coords, minX, minY, maxX, maxY, nodeSize) {
 	var stack = [
 		0,
@@ -305,8 +300,7 @@ function range(ids, coords, minX, minY, maxX, maxY, nodeSize) {
 	return result;
 }
 var init_range = __esmMin((() => {}));
-//#endregion
-//#region node_modules/kdbush/src/within.js
+// node_modules/kdbush/src/within.js
 function within(ids, coords, qx, qy, r, nodeSize) {
 	var stack = [
 		0,
@@ -347,8 +341,7 @@ function sqDist(ax, ay, bx, by) {
 	return dx * dx + dy * dy;
 }
 var init_within = __esmMin((() => {}));
-//#endregion
-//#region node_modules/kdbush/src/index.js
+// node_modules/kdbush/src/index.js
 var src_exports = /* @__PURE__ */ __exportAll({ default: () => kdbush });
 function kdbush(points, getX, getY, nodeSize, ArrayType) {
 	return new KDBush(points, getX, getY, nodeSize, ArrayType);
@@ -387,8 +380,7 @@ var init_src = __esmMin((() => {
 		}
 	};
 }));
-//#endregion
-//#region node_modules/graham_scan/graham_scan.min.js
+// node_modules/graham_scan/graham_scan.min.js
 var require_graham_scan_min = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Graham's Scan Convex Hull Algorithm
@@ -449,8 +441,7 @@ var require_graham_scan_min = /* @__PURE__ */ __commonJSMin(((exports, module) =
 		return ConvexHullGrahamScan;
 	}), "undefined" != typeof module && (module.exports = ConvexHullGrahamScan);
 }));
-//#endregion
-//#region node_modules/bezier-js/lib/utils.js
+// node_modules/bezier-js/lib/utils.js
 var require_utils = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	(function() {
 		"use strict";
@@ -1049,8 +1040,7 @@ var require_utils = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = utils;
 	})();
 }));
-//#endregion
-//#region node_modules/bezier-js/lib/poly-bezier.js
+// node_modules/bezier-js/lib/poly-bezier.js
 var require_poly_bezier = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	(function() {
 		"use strict";
@@ -1107,8 +1097,7 @@ var require_poly_bezier = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = PolyBezier;
 	})();
 }));
-//#endregion
-//#region node_modules/bezier-js/lib/normalise-svg.js
+// node_modules/bezier-js/lib/normalise-svg.js
 var require_normalise_svg = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Normalise an SVG path to absolute coordinates
@@ -1291,8 +1280,7 @@ var require_normalise_svg = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 	}
 	module.exports = normalizePath;
 }));
-//#endregion
-//#region node_modules/bezier-js/lib/svg-to-beziers.js
+// node_modules/bezier-js/lib/svg-to-beziers.js
 var require_svg_to_beziers = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var normalise = require_normalise_svg();
 	var M = {
@@ -1340,8 +1328,7 @@ var require_svg_to_beziers = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 	}
 	module.exports = convertPath;
 }));
-//#endregion
-//#region node_modules/bezier-js/lib/bezier.js
+// node_modules/bezier-js/lib/bezier.js
 var require_bezier = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	A javascript Bezier curve library by Pomax.
@@ -2044,13 +2031,11 @@ var require_bezier = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = Bezier;
 	})();
 }));
-//#endregion
-//#region node_modules/bezier-js/index.js
+// node_modules/bezier-js/index.js
 var require_bezier_js = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_bezier();
 }));
-//#endregion
-//#region node_modules/makerjs/dist/index.js
+// node_modules/makerjs/dist/index.js
 var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Root module for Maker.js.
@@ -10988,8 +10973,7 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	MakerJs.version = "0.19.2";
 	var Bezier = require_bezier_js();
 }));
-//#endregion
-//#region node_modules/tiny-inflate/index.js
+// node_modules/tiny-inflate/index.js
 var require_tiny_inflate = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var TINF_OK = 0;
 	var TINF_DATA_ERROR = -3;
@@ -11207,8 +11191,7 @@ var require_tiny_inflate = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	length_base[28] = 258;
 	module.exports = tinf_uncompress;
 }));
-//#endregion
-//#region node_modules/opentype.js/src/bbox.js
+// node_modules/opentype.js/src/bbox.js
 var import_dist = /* @__PURE__ */ __toESM(require_dist());
 var import_tiny_inflate = /* @__PURE__ */ __toESM(require_tiny_inflate());
 function derive(v0, v1, v2, v3, t) {
@@ -11341,8 +11324,7 @@ BoundingBox.prototype.addQuad = function(x0, y0, x1, y1, x, y) {
 	const cp2y = cp1y + 1 / 3 * (y - y0);
 	this.addBezier(x0, y0, cp1x, cp1y, cp2x, cp2y, x, y);
 };
-//#endregion
-//#region node_modules/opentype.js/src/path.js
+// node_modules/opentype.js/src/path.js
 /**
 * A bézier path containing a set of path commands similar to a SVG path.
 * Paths can be drawn on a context using `draw`.
@@ -11600,8 +11582,7 @@ Path.prototype.toDOMElement = function(decimalPlaces) {
 	newPath.setAttribute("d", temporaryPath);
 	return newPath;
 };
-//#endregion
-//#region node_modules/opentype.js/src/check.js
+// node_modules/opentype.js/src/check.js
 function fail(message) {
 	throw new Error(message);
 }
@@ -11613,8 +11594,7 @@ var check_default = {
 	argument,
 	assert: argument
 };
-//#endregion
-//#region node_modules/opentype.js/src/types.js
+// node_modules/opentype.js/src/types.js
 var LIMIT16 = 32768;
 var LIMIT32 = 2147483648;
 /**
@@ -12316,8 +12296,7 @@ encode.LITERAL = function(v) {
 sizeOf.LITERAL = function(v) {
 	return v.length;
 };
-//#endregion
-//#region node_modules/opentype.js/src/table.js
+// node_modules/opentype.js/src/table.js
 /**
 * @exports opentype.Table
 * @class
@@ -12535,8 +12514,7 @@ var table_default = {
 	tableList,
 	recordList
 };
-//#endregion
-//#region node_modules/opentype.js/src/parse.js
+// node_modules/opentype.js/src/parse.js
 function getByte(dataView, offset) {
 	return dataView.getUint8(offset);
 }
@@ -12886,8 +12864,7 @@ var parse_default = {
 	bytesToString,
 	Parser
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/cmap.js
+// node_modules/opentype.js/src/tables/cmap.js
 function parseCmapTableFormat12(cmap, p) {
 	p.parseUShort();
 	cmap.length = p.parseULong();
@@ -13101,8 +13078,7 @@ var cmap_default = {
 	parse: parseCmapTable,
 	make: makeCmapTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/encoding.js
+// node_modules/opentype.js/src/encoding.js
 var cffStandardStrings = [
 	".notdef",
 	"space",
@@ -14387,8 +14363,7 @@ function addGlyphNames(font) {
 		} else if (font.glyphNames.names) glyph.name = font.glyphNames.glyphIndexToName(i);
 	}
 }
-//#endregion
-//#region node_modules/opentype.js/src/draw.js
+// node_modules/opentype.js/src/draw.js
 function line(ctx, x1, y1, x2, y2) {
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
@@ -14396,8 +14371,7 @@ function line(ctx, x1, y1, x2, y2) {
 	ctx.stroke();
 }
 var draw_default = { line };
-//#endregion
-//#region node_modules/opentype.js/src/tables/glyf.js
+// node_modules/opentype.js/src/tables/glyf.js
 function parseGlyphCoordinate(p, flag, previousValue, shortVectorBitMask, sameBitMask) {
 	let v;
 	if ((flag & shortVectorBitMask) > 0) {
@@ -14627,8 +14601,7 @@ var glyf_default = {
 	getPath,
 	parse: parseGlyfTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/glyph.js
+// node_modules/opentype.js/src/glyph.js
 function getPathDefinition(glyph, path) {
 	let _path = path || { commands: [] };
 	return {
@@ -14881,8 +14854,7 @@ Glyph.prototype.drawMetrics = function(ctx, x, y, fontSize) {
 	ctx.strokeStyle = "green";
 	draw_default.line(ctx, x + advanceWidth * scale, -1e4, x + advanceWidth * scale, 1e4);
 };
-//#endregion
-//#region node_modules/opentype.js/src/glyphset.js
+// node_modules/opentype.js/src/glyphset.js
 function defineDependentProperty(glyph, externalName, internalName) {
 	Object.defineProperty(glyph, externalName, {
 		get: function() {
@@ -14999,8 +14971,7 @@ var glyphset_default = {
 	ttfGlyphLoader,
 	cffGlyphLoader
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/cff.js
+// node_modules/opentype.js/src/tables/cff.js
 function equals(a, b) {
 	if (a === b) return true;
 	else if (Array.isArray(a) && Array.isArray(b)) {
@@ -16262,8 +16233,7 @@ var cff_default = {
 	parse: parseCFFTable,
 	make: makeCFFTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/head.js
+// node_modules/opentype.js/src/tables/head.js
 function parseHeadTable(data, start) {
 	const head = {};
 	const p = new parse_default.Parser(data, start);
@@ -16383,8 +16353,7 @@ var head_default = {
 	parse: parseHeadTable,
 	make: makeHeadTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/hhea.js
+// node_modules/opentype.js/src/tables/hhea.js
 function parseHheaTable(data, start) {
 	const hhea = {};
 	const p = new parse_default.Parser(data, start);
@@ -16497,8 +16466,7 @@ var hhea_default = {
 	parse: parseHheaTable,
 	make: makeHheaTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/hmtx.js
+// node_modules/opentype.js/src/tables/hmtx.js
 function parseHmtxTable(data, start, numMetrics, numGlyphs, glyphs) {
 	let advanceWidth;
 	let leftSideBearing;
@@ -16536,8 +16504,7 @@ var hmtx_default = {
 	parse: parseHmtxTable,
 	make: makeHmtxTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/ltag.js
+// node_modules/opentype.js/src/tables/ltag.js
 function makeLtagTable(tags) {
 	const result = new table_default.Table("ltag", [
 		{
@@ -16602,8 +16569,7 @@ var ltag_default = {
 	make: makeLtagTable,
 	parse: parseLtagTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/maxp.js
+// node_modules/opentype.js/src/tables/maxp.js
 function parseMaxpTable(data, start) {
 	const maxp = {};
 	const p = new parse_default.Parser(data, start);
@@ -16641,8 +16607,7 @@ var maxp_default = {
 	parse: parseMaxpTable,
 	make: makeMaxpTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/name.js
+// node_modules/opentype.js/src/tables/name.js
 var nameTableNames = [
 	"copyright",
 	"fontFamily",
@@ -17354,8 +17319,7 @@ var name_default = {
 	parse: parseNameTable,
 	make: makeNameTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/os2.js
+// node_modules/opentype.js/src/tables/os2.js
 var unicodeRanges = [
 	{
 		begin: 0,
@@ -18144,8 +18108,7 @@ var os2_default = {
 	unicodeRanges,
 	getUnicodeRange
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/post.js
+// node_modules/opentype.js/src/tables/post.js
 function parsePostTable(data, start) {
 	const post = {};
 	const p = new parse_default.Parser(data, start);
@@ -18232,8 +18195,7 @@ var post_default = {
 	parse: parsePostTable,
 	make: makePostTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/gsub.js
+// node_modules/opentype.js/src/tables/gsub.js
 var subtableParsers = new Array(9);
 subtableParsers[1] = function parseLookup1() {
 	const start = this.offset + this.relativeOffset;
@@ -18489,8 +18451,7 @@ var gsub_default = {
 	parse: parseGsubTable,
 	make: makeGsubTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/meta.js
+// node_modules/opentype.js/src/tables/meta.js
 function parseMetaTable(data, start) {
 	const p = new parse_default.Parser(data, start);
 	const tableVersion = p.parseULong();
@@ -18563,8 +18524,7 @@ var meta_default = {
 	parse: parseMetaTable,
 	make: makeMetaTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/sfnt.js
+// node_modules/opentype.js/src/tables/sfnt.js
 function log2(v) {
 	return Math.log(v) / Math.log(2) | 0;
 }
@@ -18846,8 +18806,7 @@ var sfnt_default = {
 	fontToTable: fontToSfntTable,
 	computeCheckSum
 };
-//#endregion
-//#region node_modules/opentype.js/src/layout.js
+// node_modules/opentype.js/src/layout.js
 function searchTag(arr, tag) {
 	let imin = 0;
 	let imax = arr.length - 1;
@@ -19093,8 +19052,7 @@ Layout.prototype = {
 		}
 	}
 };
-//#endregion
-//#region node_modules/opentype.js/src/substitution.js
+// node_modules/opentype.js/src/substitution.js
 /**
 * @exports opentype.Substitution
 * @class
@@ -19368,8 +19326,7 @@ Substitution.prototype.add = function(feature, sub, script, language) {
 		case "rlig": return this.addLigature(feature, sub, script, language);
 	}
 };
-//#endregion
-//#region node_modules/opentype.js/src/util.js
+// node_modules/opentype.js/src/util.js
 function isBrowser() {
 	return typeof window !== "undefined";
 }
@@ -19388,8 +19345,7 @@ function arrayBufferToNodeBuffer(ab) {
 function checkArgument(expression, message) {
 	if (!expression) throw message;
 }
-//#endregion
-//#region node_modules/opentype.js/src/hintingtt.js
+// node_modules/opentype.js/src/hintingtt.js
 var instructionTable;
 var exec;
 var execGlyph;
@@ -21290,13 +21246,11 @@ po *----------------------->* p
 
 vim: set ts=4 sw=4 expandtab:
 *****/
-//#endregion
-//#region __vite-browser-external
+// __vite-browser-external
 var require___vite_browser_external = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {};
 }));
-//#endregion
-//#region node_modules/opentype.js/src/font.js
+// node_modules/opentype.js/src/font.js
 /**
 * @typedef FontOptions
 * @type Object
@@ -21758,8 +21712,7 @@ Font.prototype.usWeightClasses = {
 	EXTRA_BOLD: 800,
 	BLACK: 900
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/fvar.js
+// node_modules/opentype.js/src/tables/fvar.js
 function addName(name, names) {
 	const nameString = JSON.stringify(name);
 	let nameID = 256;
@@ -21915,8 +21868,7 @@ var fvar_default = {
 	make: makeFvarTable,
 	parse: parseFvarTable
 };
-//#endregion
-//#region node_modules/opentype.js/src/tables/gpos.js
+// node_modules/opentype.js/src/tables/gpos.js
 function parseTaggedListTable(data, start) {
 	const p = new parse_default.Parser(data, start);
 	const n = p.parseUShort();
@@ -22078,8 +22030,7 @@ function parseGposTable(data, start, font) {
 	}
 }
 var gpos_default = { parse: parseGposTable };
-//#endregion
-//#region node_modules/opentype.js/src/tables/kern.js
+// node_modules/opentype.js/src/tables/kern.js
 function parseWindowsKernTable(p) {
 	const pairs = {};
 	p.skip("uShort");
@@ -22123,8 +22074,7 @@ function parseKernTable(data, start) {
 	else throw new Error("Unsupported kern table version (" + tableVersion + ").");
 }
 var kern_default = { parse: parseKernTable };
-//#endregion
-//#region node_modules/opentype.js/src/tables/loca.js
+// node_modules/opentype.js/src/tables/loca.js
 function parseLocaTable(data, start, numGlyphs, shortVersion) {
 	const p = new parse_default.Parser(data, start);
 	const parseFn = shortVersion ? p.parseUShort : p.parseULong;
@@ -22137,8 +22087,7 @@ function parseLocaTable(data, start, numGlyphs, shortVersion) {
 	return glyphOffsets;
 }
 var loca_default = { parse: parseLocaTable };
-//#endregion
-//#region node_modules/opentype.js/src/opentype.js
+// node_modules/opentype.js/src/opentype.js
 /**
 * The opentype library.
 * @namespace opentype
@@ -22440,8 +22389,7 @@ function load(url, callback) {
 		return callback(null, font);
 	});
 }
-//#endregion
-//#region node_modules/lucide-react/dist/esm/shared/src/utils.js
+// node_modules/lucide-react/dist/esm/shared/src/utils.js
 /**
 * @license lucide-react v0.562.0 - ISC
 *
@@ -22460,8 +22408,7 @@ var mergeClasses = (...classes) => classes.filter((className, index, array) => {
 var hasA11yProp = (props) => {
 	for (const prop in props) if (prop.startsWith("aria-") || prop === "role" || prop === "title") return true;
 };
-//#endregion
-//#region node_modules/lucide-react/dist/esm/defaultAttributes.js
+// node_modules/lucide-react/dist/esm/defaultAttributes.js
 /**
 * @license lucide-react v0.562.0 - ISC
 *
@@ -22479,8 +22426,7 @@ var defaultAttributes = {
 	strokeLinecap: "round",
 	strokeLinejoin: "round"
 };
-//#endregion
-//#region node_modules/lucide-react/dist/esm/Icon.js
+// node_modules/lucide-react/dist/esm/Icon.js
 /**
 * @license lucide-react v0.562.0 - ISC
 *
@@ -22498,8 +22444,7 @@ var Icon = (0, import_react.forwardRef)(({ color = "currentColor", size = 24, st
 	...!children && !hasA11yProp(rest) && { "aria-hidden": "true" },
 	...rest
 }, [...iconNode.map(([tag, attrs]) => (0, import_react.createElement)(tag, attrs)), ...Array.isArray(children) ? children : [children]]));
-//#endregion
-//#region node_modules/lucide-react/dist/esm/createLucideIcon.js
+// node_modules/lucide-react/dist/esm/createLucideIcon.js
 /**
 * @license lucide-react v0.562.0 - ISC
 *
@@ -22536,8 +22481,7 @@ var ExternalLink = createLucideIcon("external-link", [
 		key: "a6xqqp"
 	}]
 ]);
-//#endregion
-//#region src/components/Sidebar.tsx
+// src/components/Sidebar.tsx
 function Sidebar({ state, setState }) {
 	const { fontList, customFont, fontFamily, fontVariant, text, size, lineHeight, union, kerning, filled, separate, bezierAccuracy, dxfUnits, fill, stroke, strokeWidth, strokeNonScaling, fillRule } = state;
 	const fontVariants = fontList && fontFamily ? fontList.items.find((f) => f.family === fontFamily)?.variants || [] : [];
@@ -22826,8 +22770,7 @@ function Sidebar({ state, setState }) {
 		] })] })
 	] });
 }
-//#endregion
-//#region src/components/Output.tsx
+// src/components/Output.tsx
 function Output({ state }) {
 	const { svgOutput, dxfOutput, errorMessage, text } = state;
 	const [copyButtonText, setCopyButtonText] = (0, import_react.useState)("copy to clipboard");
@@ -22980,8 +22923,7 @@ function Output({ state }) {
 		})
 	] });
 }
-//#endregion
-//#region src/lib/fontUtils.ts
+// src/lib/fontUtils.ts
 var apiKey = "AIzaSyAOES8EmKhuJEnsn9kS1XKBpxxp-TgN8Jc";
 async function loadGoogleFonts() {
 	return (await fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}`)).json();
@@ -23041,8 +22983,7 @@ async function renderSvg(state) {
 		return { errorMessage: err.toString() };
 	}
 }
-//#endregion
-//#region src/store/appStore.ts
+// src/store/appStore.ts
 var defaultState = {
 	fontList: null,
 	customFont: void 0,
@@ -23066,8 +23007,7 @@ var defaultState = {
 	dxfOutput: "",
 	errorMessage: ""
 };
-//#endregion
-//#region src/components/App.tsx
+// src/components/App.tsx
 function App() {
 	const [state, setState] = (0, import_react.useState)(defaultState);
 	(0, import_react.useEffect)(() => {
@@ -23114,5 +23054,4 @@ function App() {
 		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Output, { state })
 	] });
 }
-//#endregion
 export { App as default };

@@ -1,5 +1,5 @@
-import { n as __commonJSMin, o as __toESM, t as require_react } from "./react.BEUfxbPS.js";
-//#region node_modules/scheduler/cjs/scheduler.production.js
+import { n as __commonJSMin, o as __toESM, t as require_react } from "./react.D4kHKyMH.js";
+// node_modules/scheduler/cjs/scheduler.production.js
 /**
 * @license React
 * scheduler.production.js
@@ -253,13 +253,11 @@ var require_scheduler_production = /* @__PURE__ */ __commonJSMin(((exports) => {
 		};
 	};
 }));
-//#endregion
-//#region node_modules/scheduler/index.js
+// node_modules/scheduler/index.js
 var require_scheduler = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_scheduler_production();
 }));
-//#endregion
-//#region node_modules/react-dom/cjs/react-dom.production.js
+// node_modules/react-dom/cjs/react-dom.production.js
 /**
 * @license React
 * react-dom.production.js
@@ -400,8 +398,7 @@ var require_react_dom_production = /* @__PURE__ */ __commonJSMin(((exports) => {
 	};
 	exports.version = "19.2.3";
 }));
-//#endregion
-//#region node_modules/react-dom/index.js
+// node_modules/react-dom/index.js
 var require_react_dom = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	function checkDCE() {
 		if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === "undefined" || typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== "function") return;
@@ -414,8 +411,7 @@ var require_react_dom = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	checkDCE();
 	module.exports = require_react_dom_production();
 }));
-//#endregion
-//#region node_modules/react-dom/cjs/react-dom-client.production.js
+// node_modules/react-dom/cjs/react-dom-client.production.js
 /**
 * @license React
 * react-dom-client.production.js
@@ -9717,8 +9713,7 @@ var require_react_dom_client_production = /* @__PURE__ */ __commonJSMin(((export
 		return new ReactDOMHydrationRoot(initialChildren);
 	};
 }));
-//#endregion
-//#region node_modules/@astrojs/react/dist/static-html.js
+// node_modules/@astrojs/react/dist/static-html.js
 var import_client = (/* @__PURE__ */ __commonJSMin(((exports, module) => {
 	function checkDCE() {
 		if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === "undefined" || typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== "function") return;
@@ -9742,8 +9737,7 @@ var StaticHtml = ({ value, name, hydrate = true }) => {
 };
 StaticHtml.shouldComponentUpdate = () => false;
 var static_html_default = StaticHtml;
-//#endregion
-//#region node_modules/@astrojs/react/dist/client.js
+// node_modules/@astrojs/react/dist/client.js
 function isAlreadyHydrated(element) {
 	for (const key in element) if (key.startsWith("__reactContainer")) return key;
 }
@@ -9812,5 +9806,4 @@ var client_default = (element) => (Component, props, { default: children, ...slo
 		}).render(componentEl);
 	});
 };
-//#endregion
 export { client_default as default };
